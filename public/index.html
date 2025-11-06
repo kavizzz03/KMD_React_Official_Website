@@ -2,42 +2,195 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
+    <!-- 🎂 KMD Sweet House Icons -->
+    <link rel="icon" type="image/x-icon" href="https://cdn-icons-png.flaticon.com/512/7057/7057965.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="https://cdn-icons-png.flaticon.com/512/7057/7057965.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://cdn-icons-png.flaticon.com/512/7057/7057965.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://cdn-icons-png.flaticon.com/512/7057/7057965.png">
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+    <!-- Viewport & Basic Meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#D2691E" />
+    <meta name="msapplication-TileColor" content="#FFD700" />
+
+    <!-- Primary SEO Meta Tags -->
+    <title>KMD Sweet House 🍯 | Sri Lankan Traditional Sweets & Desserts in Hanwella</title>
+    <meta name="description" content="KMD Sweet House — Authentic Sri Lankan traditional sweets since 2014. Enjoy Hakuru Jaggery, Milk Toffee, Murukku, and more. Freshly made daily in Hanwella." />
+    <meta name="keywords" content="KMD Sweet House, Sri Lankan sweets, traditional sweets, Hakuru Jaggery, Hanwella sweets, milk toffee, aluwa, kokis, Sri Lankan desserts" />
+    <meta name="author" content="KMD Sweet House" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://kmd.cpsharetxt.com/" />
+    <meta property="og:title" content="KMD Sweet House — Sri Lankan Traditional Sweets" />
+    <meta property="og:description" content="Authentic Sri Lankan sweets made with love and tradition since 2014. Fresh delivery in Hanwella. Taste the heritage!" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1619854916405-6e5b5b07ad5a?w=1200&h=630&fit=crop" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="KMD Sweet House" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://kmd.cpsharetxt.com/" />
+    <meta property="twitter:title" content="KMD Sweet House — Premium Sri Lankan Sweets" />
+    <meta property="twitter:description" content="Fresh Sri Lankan traditional sweets — Konda Kavum, Milk Toffee, Kokis, and more. Taste the sweetness of Sri Lanka!" />
+    <meta property="twitter:image" content="https://images.unsplash.com/photo-1619854916405-6e5b5b07ad5a?w=1200&h=630&fit=crop" />
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Bakery",
+      "name": "KMD Sweet House",
+      "description": "Premium Sri Lankan Traditional Sweets and Desserts - Authentic taste since 2014",
+      "url": "https://kmd.cpsharetxt.com",
+      "logo": "https://cdn-icons-png.flaticon.com/512/7057/7057965.png",
+      "telephone": "+94-777-189893",
+      "email": "kmdproduction2025@gmail.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "12/D/2, High Level Road, Thunnana",
+        "addressLocality": "Hanwella",
+        "addressRegion": "Western Province",
+        "postalCode": "10650",
+        "addressCountry": "LK"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "6.8716",
+        "longitude": "80.1052"
+      },
+      "openingHours": ["Mo-Su 08:00-20:00"],
+      "priceRange": "₹₹",
+      "servesCuisine": "Sri Lankan Sweets",
+      "foundationDate": "2014",
+      "foundingLocation": "Hanwella, Sri Lanka",
+      "hasMenu": "https://kmd.cpsharetxt.com/menu",
+      "sameAs": [
+        "https://facebook.com/kmdsweethouse",
+        "https://instagram.com/kmdsweethouse"
+      ],
+      "areaServed": "Hanwella, Sri Lanka",
+      "knowsAbout": [
+        "Sri Lankan Traditional Sweets",
+        "Hakuru Jaggery",
+        "Milk Toffee",
+        "Pol Toffee",
+        "Murukku"
+      ],
+      "award": "Best Traditional Sweets in Hanwella"
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "KMD Sweet House",
+      "alternateName": "KMD Sweet House Hanwella",
+      "url": "https://kmd.cpsharetxt.com",
+      "logo": "https://cdn-icons-png.flaticon.com/512/7057/7057965.png",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+94-777-189893",
+        "contactType": "customer service",
+        "areaServed": "LK",
+        "availableLanguage": ["en", "si"],
+        "contactOption": "TollFree",
+        "email": "kmdproduction2025@gmail.com"
+      },
+      "sameAs": [
+        "https://www.facebook.com/kmdsweethouse",
+        "https://www.instagram.com/kmdsweethouse",
+        "https://wa.me/94777189893"
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "KMD Sweet House",
+      "url": "https://kmd.cpsharetxt.com",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://kmd.cpsharetxt.com/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      },
+      "description": "Order traditional Sri Lankan sweets online from KMD Sweet House in Hanwella"
+    }
+    </script>
+
+    <!-- Preload Fonts & Images -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1619854916405-6e5b5b07ad5a?w=800&q=80">
+
+    <!-- DNS Prefetch -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://cdn-icons-png.flaticon.com">
+    <link rel="dns-prefetch" href="https://images.unsplash.com">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://kmd.cpsharetxt.com" />
+
+    <!-- Mobile Optimization -->
+    <meta name="format-detection" content="telephone=yes">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="KMD Sweet House">
+
+    <!-- PWA Theme -->
+    <meta name="theme-color" content="#D2691E" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#8B4513" media="(prefers-color-scheme: dark)">
+    <meta name="msapplication-navbutton-color" content="#D2691E">
+
+    <!-- Additional SEO Meta -->
+    <meta name="classification" content="Food & Beverage, Sweets, Sri Lankan Cuisine">
+    <meta name="copyright" content="KMD Sweet House">
+    <meta name="coverage" content="Sri Lanka">
+    <meta name="distribution" content="Global">
+    <meta name="rating" content="General">
+    <meta name="revisit-after" content="7 days">
+    <meta name="target" content="all">
+    <meta name="audience" content="all">
+
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" media="print" onload="this.media='all'">
+
+    <!-- JS Disabled Fallback -->
+    <noscript>
+      <style>
+        #root:empty::before,
+        #root:empty::after,
+        .loading-text,
+        .floating-sweet {
+          display: none;
+        }
+        #root {
+          padding: 2rem;
+          text-align: center;
+          background: linear-gradient(135deg, #FFF8DC 0%, #F3E5AB 100%);
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+        }
+      </style>
+      <p>KMD Sweet House works best with JavaScript enabled. Please enable it to enjoy our sweets online!</p>
+    </noscript>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
-
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
   </body>
 </html>
