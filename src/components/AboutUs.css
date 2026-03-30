@@ -1,0 +1,381 @@
+/* About Us Page Styles */
+.asb-about-page {
+  overflow-x: hidden;
+}
+
+/* Hero Section */
+.about-hero {
+  background: linear-gradient(90deg, rgba(220,38,38,0.95) 0%, rgba(0,0,0,0.8) 100%);
+              
+  background-size: cover;
+  background-position: center;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+}
+
+.hero-badge {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  border-radius: 50px;
+}
+
+.hero-stats {
+  margin-top: 2rem;
+}
+
+.hero-stats h3 {
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+
+/* New Branch Announcement */
+.new-branch-announcement {
+  position: relative;
+  background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+}
+
+.new-branch-content {
+  padding: 2rem;
+}
+
+.branch-features .col-md-6 {
+  display: flex;
+  align-items: center;
+}
+
+.coming-soon-badge {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Vision & Mission Cards */
+.vision-card,
+.mission-card {
+  background: white;
+  padding: 3rem;
+  border-radius: 30px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.vision-card:hover,
+.mission-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 30px 60px rgba(220,38,38,0.1);
+}
+
+.vision-card::before,
+.mission-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #dc2626, #ef4444);
+}
+
+.vision-icon,
+.mission-icon {
+  width: 80px;
+  height: 80px;
+  background: #fee2e2;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #dc2626;
+  margin-bottom: 2rem;
+}
+
+/* Company Stats */
+.stat-card {
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(220,38,38,0.1) !important;
+}
+
+.stat-card h3 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #dc2626;
+  margin-bottom: 0.5rem;
+}
+
+.stat-card p {
+  color: #64748b;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Chairman Message */
+.message-quote {
+  position: relative;
+  padding: 2rem;
+  background: white;
+  border-radius: 30px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+/* Management Cards */
+.management-card {
+  transition: all 0.3s ease;
+}
+
+.management-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(220,38,38,0.1) !important;
+}
+
+.management-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Timeline */
+.timeline {
+  position: relative;
+  padding: 2rem 0;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(180deg, #dc2626, #ef4444, #dc2626);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 2rem;
+  width: 50%;
+}
+
+.timeline-item.left {
+  left: 0;
+  padding-right: 3rem;
+}
+
+.timeline-item.right {
+  left: 50%;
+  padding-left: 3rem;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #dc2626;
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.timeline-item.left::before {
+  right: -10px;
+}
+
+.timeline-item.right::before {
+  left: -10px;
+}
+
+.timeline-card {
+  border-radius: 15px;
+  transition: all 0.3s ease;
+}
+
+.timeline-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 15px 30px rgba(220,38,38,0.1) !important;
+}
+
+.timeline-year {
+  font-size: 1.2rem;
+}
+
+/* CSR Cards */
+.csr-card {
+  transition: all 0.3s ease;
+}
+
+.csr-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(220,38,38,0.1) !important;
+}
+
+.csr-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* CTA Section */
+.about-cta {
+  background: linear-gradient(135deg, #dc2626, #991b1b) !important;
+}
+
+/* Modal Styles */
+.modal-content {
+  border-radius: 30px;
+  border: none;
+}
+
+.modal-header {
+  padding: 2rem 2rem 0;
+}
+
+.modal-body {
+  padding: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .timeline::before {
+    left: 30px;
+  }
+  
+  .timeline-item {
+    width: 100%;
+    padding-left: 60px !important;
+    padding-right: 0 !important;
+    left: 0 !important;
+  }
+  
+  .timeline-item::before {
+    left: 20px !important;
+    right: auto !important;
+  }
+  
+  .hero-stats {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 768px) {
+  .about-hero {
+    min-height: 400px;
+    text-align: center;
+  }
+  
+  .hero-stats {
+    justify-content: center;
+  }
+  
+  .vision-card,
+  .mission-card {
+    padding: 2rem;
+  }
+  
+  .stat-card h3 {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .new-branch-content {
+    padding: 1rem;
+    text-align: center;
+  }
+  
+  .branch-features {
+    text-align: left;
+  }
+  
+  .hero-stats {
+    flex-direction: column;
+    gap: 1rem !important;
+  }
+}
+/* Add these styles to your existing AboutUs.css */
+
+.csr-image-container {
+  position: relative;
+  overflow: hidden;
+  border-top-left-radius: calc(1rem - 2px);
+  border-top-right-radius: calc(1rem - 2px);
+}
+
+.image-count-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.csr-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 1rem !important;
+  overflow: hidden;
+}
+
+.csr-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+.csr-icon {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  background: rgba(0, 0, 0, 0.3);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0 10px;
+}
+
+.carousel-indicators {
+  margin-bottom: 0;
+}
+
+.carousel-caption {
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  padding: 10px;
+}

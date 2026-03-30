@@ -1,0 +1,181 @@
+/* Contact Us Page Styles */
+.asb-contact-page {
+  overflow-x: hidden;
+}
+
+/* Hero Section */
+.contact-hero {
+  background: linear-gradient(90deg, rgba(220,38,38,0.95) 0%, rgba(0,0,0,0.8) 100%);
+            
+  background-size: cover;
+  background-position: center;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+}
+
+.hero-badge {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  border-radius: 50px;
+  display: inline-block;
+}
+
+/* Contact Cards */
+.contact-card {
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.contact-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(220,38,38,0.1) !important;
+}
+
+.contact-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  margin: 0 auto 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.contact-card:hover .contact-icon {
+  transform: scale(1.1) rotate(360deg);
+}
+
+/* Branch Cards */
+.branch-card {
+  border-radius: 15px;
+  transition: all 0.3s ease;
+}
+
+.branch-card:hover {
+  transform: translateX(5px);
+  box-shadow: 0 10px 30px rgba(220,38,38,0.1) !important;
+}
+
+/* Form Styles */
+.form-control, .form-select {
+  border: 1px solid #e2e8f0;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 0.2rem rgba(220,38,38,0.1);
+}
+
+.input-group-text {
+  border: 1px solid #e2e8f0;
+  border-right: none;
+  border-radius: 10px 0 0 10px;
+}
+
+/* Map Section */
+.map-container {
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+/* Social Icons */
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.social-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  color: white;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.social-icon:hover {
+  transform: translateY(-5px);
+  color: white;
+}
+
+.social-icon.facebook {
+  background: #1877f2;
+}
+
+.social-icon.instagram {
+  background: linear-gradient(45deg, #f09433, #d62976, #962fbf);
+}
+
+.social-icon.whatsapp {
+  background: #25d366;
+}
+
+.social-icon.twitter {
+  background: #1da1f2;
+}
+
+.social-icon.linkedin {
+  background: #0a66c2;
+}
+
+.social-icon:hover {
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .contact-hero {
+    min-height: 250px;
+  }
+  
+  .contact-hero h1 {
+    font-size: 2.5rem;
+  }
+  
+  .contact-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+  
+  .social-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .contact-hero h1 {
+    font-size: 2rem;
+  }
+  
+  .contact-card {
+    padding: 1.5rem !important;
+  }
+  
+  .branch-card .d-flex {
+    flex-direction: column;
+  }
+  
+  .branch-card .text-danger.me-3 {
+    margin-right: 0 !important;
+    margin-bottom: 1rem;
+  }
+}

@@ -1,34 +1,50 @@
 import React, { useState } from "react";
 import { 
-  FaFacebook, 
+  FaFacebookF, 
   FaInstagram, 
   FaWhatsapp, 
   FaEnvelope, 
   FaMapMarkerAlt, 
   FaPhone,
-  FaUtensils,
-  FaHeart,
-  FaShippingFast,
-  FaAward,
-  FaLeaf,
-  FaStar,
-  FaClock,
+  FaStore,
   FaTruck,
+  FaShieldAlt,
+  FaUndo,
+  FaTwitter,
+  FaYoutube,
+  FaLinkedinIn,
+  FaMobile,
   FaCrown,
-  FaGem,
+  FaHeadset,
+  FaCheckCircle,
+  FaRegPaperPlane,
+  FaRegEnvelope,
+  FaRegClock,
+  FaRegBuilding,
+  FaRegHeart,
+  FaTimesCircle,
+  FaExclamationTriangle,
   FaArrowUp
 } from "react-icons/fa";
+import { SiVisa, SiMastercard, SiAmericanexpress } from "react-icons/si";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button, Form, InputGroup } from "react-bootstrap";
+import { Button, Form, InputGroup, Alert } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import "./Footer.css";
+
+// Import company logo
+import asbLogo from "../assets/images/logo.png";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
   const [email, setEmail] = useState("");
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [activeLink, setActiveLink] = useState(null);
 
-  // Check scroll position for back to top button
   React.useEffect(() => {
     const handleScroll = () => {
       setShowScrollTop(window.scrollY > 400);
@@ -41,30 +57,122 @@ const Footer = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleSubscribe = (e) => {
+  // Handle subscribe with proper error handling
+  const handleSubscribe = async (e) => {
     e.preventDefault();
-    if (email) {
-      setIsSubscribed(true);
-      setEmail("");
-      setTimeout(() => setIsSubscribed(false), 3000);
+    
+    // Clear previous messages
+    setError(null);
+    setSuccess(null);
+    
+    if (!email) {
+      setError("Please enter your email address");
+      return;
+    }
+    
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    try {
+      const response = await fetch("https://whats.asbfashion.com/api/subscribe.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({ email: email }),
+      });
+      
+      const result = await response.json();
+      
+      console.log("Subscription response:", result); // For debugging
+      
+      if (result.status === "success") {
+        // Success - email subscribed successfully
+        setSuccess("Successfully subscribed! Check your inbox for updates.");
+        setEmail("");
+        setIsSubscribed(true);
+        
+        // Auto hide success message after 5 seconds
+        setTimeout(() => {
+          setSuccess(null);
+          setIsSubscribed(false);
+        }, 5000);
+      } 
+      else if (result.status === "exists" || result.message?.toLowerCase().includes("already")) {
+        // Email already exists
+        setError("This email is already subscribed to our newsletter!");
+        
+        // Auto hide error after 5 seconds
+        setTimeout(() => {
+          setError(null);
+        }, 5000);
+      }
+      else if (result.status === "error") {
+        // Other errors
+        setError(result.message || "Something went wrong. Please try again.");
+        
+        // Auto hide error after 5 seconds
+        setTimeout(() => {
+          setError(null);
+        }, 5000);
+      }
+      else {
+        // Unknown response
+        setError("Unable to subscribe. Please try again later.");
+        
+        setTimeout(() => {
+          setError(null);
+        }, 5000);
+      }
+    } catch (error) {
+      console.error("Error subscribing:", error);
+      setError("Network error. Please check your connection and try again.");
+      
+      setTimeout(() => {
+        setError(null);
+      }, 5000);
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  // Quick links data
+  const quickLinks = [
+    { name: "Home", path: "/" },
+    { name: "Men's Collection", path: "/men" },
+    { name: "Women's Collection", path: "/women" },
+    { name: "Kids Collection", path: "/kids" },
+    { name: "Lookbook", path: "/lookbook" },
+    { name: "Store Locator", path: "/stores" }
+  ];
+
+  // Social media data
+  const socialMedia = [
+    { icon: <FaFacebookF />, url: "https://facebook.com/asbfashion", name: "Facebook" },
+    { icon: <FaInstagram />, url: "https://instagram.com/asbfashion", name: "Instagram" },
+    { icon: <FaTwitter />, url: "https://twitter.com/asbfashion", name: "Twitter" },
+    { icon: <FaYoutube />, url: "https://youtube.com/asbfashion", name: "YouTube" },
+    { icon: <FaLinkedinIn />, url: "https://linkedin.com/company/asbfashion", name: "LinkedIn" },
+    { icon: <FaWhatsapp />, url: "https://wa.me/94719057057", name: "WhatsApp" }
+  ];
+
   const footerVariants = {
-    hidden: { opacity: 0, y: 50 },
+    hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        ease: "easeOut",
-        staggerChildren: 0.15
-      }
+      transition: { duration: 0.8, staggerChildren: 0.1 }
     }
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
@@ -72,310 +180,237 @@ const Footer = () => {
     }
   };
 
-  const floatVariants = {
-    float: {
-      y: [0, -10, 0],
-      transition: {
-        duration: 3,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }
-    }
-  };
-
-  const pulseVariants = {
-    pulse: {
-      scale: [1, 1.05, 1],
-      transition: {
-        duration: 2,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }
-    }
-  };
-
   return (
     <>
       <motion.footer 
-        className="footer-premium"
+        className="asb-footer-pro"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
         variants={footerVariants}
       >
-        {/* Main Footer Content */}
-        <div className="footer-main-premium">
+        <div className="footer-bg-elements">
+          <div className="bg-grid"></div>
+          <div className="bg-glow glow-1"></div>
+          <div className="bg-glow glow-2"></div>
+        </div>
+
+        <div className="footer-main">
           <div className="container">
-            <div className="row g-5">
+            <div className="footer-grid">
               {/* Brand Column */}
-              <motion.div className="col-xl-4 col-lg-6" variants={itemVariants}>
-                <div className="footer-brand-premium">
-                  <motion.div 
-                    className="brand-logo-premium mb-4"
-                    whileHover={{ scale: 1.05, rotate: 5 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <FaUtensils className="brand-icon-premium" />
-                    <div className="brand-text-premium">
-                      <h3 className="brand-title">KMD Sweet House</h3>
-                      <p className="brand-tagline">Traditional Sri Lankan Sweets</p>
-                    </div>
-                  </motion.div>
-                  
-                  <p className="footer-description-premium">
-                    Crafting authentic Sri Lankan sweets with generations-old family recipes. 
-                    Experience the taste of tradition in every bite, made with love and premium ingredients.
+              <motion.div className="footer-col brand-col" variants={itemVariants}>
+                <div className="brand-container">
+                  <div className="logo-container">
+                    <img src={asbLogo} alt="ASB Fashion" className="footer-logo" />
+                  </div>
+                  <div className="brand-meta">
+                    <FaCrown className="brand-crown" />
+                    <span>Since 1992</span>
+                  </div>
+                  <p className="brand-description">
+                    Sri Lanka's premier fashion destination with 17 branches islandwide, 
+                    delivering exceptional style and quality since 1992.
                   </p>
-                  
-                  <div className="quality-features">
-                    {[
-                      { icon: FaAward, text: "Premium Quality", color: "#FFD700" },
-                      { icon: FaLeaf, text: "Natural Ingredients", color: "#28a745" },
-                      { icon: FaHeart, text: "Made with Love", color: "#e83e8c" },
-                      { icon: FaShippingFast, text: "Fresh Daily", color: "#17a2b8" }
-                    ].map((feature, index) => (
-                      <motion.div 
-                        key={index}
-                        className="quality-feature"
-                        variants={itemVariants}
-                        whileHover={{ scale: 1.05, x: 5 }}
-                      >
-                        <feature.icon style={{ color: feature.color }} />
-                        <span>{feature.text}</span>
-                      </motion.div>
-                    ))}
+                  <div className="brand-stats">
+                    <div className="stat-item">
+                      <FaStore className="stat-icon" />
+                      <div className="stat-info">
+                        <span className="stat-value">17+</span>
+                        <span className="stat-label">Branches</span>
+                      </div>
+                    </div>
+                    <div className="stat-item">
+                      <FaRegHeart className="stat-icon" />
+                      <div className="stat-info">
+                        <span className="stat-value">50K+</span>
+                        <span className="stat-label">Customers</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="trust-indicators">
+                    <div className="trust-item"><FaShieldAlt /> <span>100% Authentic</span></div>
+                    <div className="trust-item"><FaTruck /> <span>Free Shipping</span></div>
+                    <div className="trust-item"><FaUndo /> <span>Easy Returns</span></div>
                   </div>
                 </div>
               </motion.div>
 
-              {/* Quick Links */}
-              <motion.div className="col-xl-2 col-lg-3 col-md-6" variants={itemVariants}>
-                <h5 className="footer-heading-premium">Explore</h5>
-                <div className="footer-links-premium">
-                  {[
-                    { path: "/", label: "Home", emoji: "🏠" },
-                    { path: "/products", label: "Products", emoji: "🍬" },
-                    { path: "/about", label: "About Us", emoji: "👨‍🍳" },
-                    { path: "/contact", label: "Contact", emoji: "📞" },
-                    { path: "/cart", label: "Shopping Cart", emoji: "🛒" },
-                    { path: "/track-order", label: "Track Order", emoji: "📦" }
-                  ].map((link, index) => (
-                    <motion.a
+              {/* Quick Links Column */}
+              <motion.div className="footer-col" variants={itemVariants}>
+                <h4 className="footer-title">
+                  <span className="title-text">Quick Links</span>
+                  <span className="title-underline"></span>
+                </h4>
+                <ul className="footer-links">
+                  {quickLinks.map((link, index) => (
+                    <motion.li 
                       key={index}
-                      href={link.path}
-                      className="footer-link-premium"
-                      whileHover={{ x: 10, color: "#FFD700" }}
-                      transition={{ type: "spring", stiffness: 400 }}
+                      onHoverStart={() => setActiveLink(index)}
+                      onHoverEnd={() => setActiveLink(null)}
                     >
-                      <span className="link-emoji">{link.emoji}</span>
-                      <span className="link-text">{link.label}</span>
-                      <div className="link-underline"></div>
-                    </motion.a>
+                      <Link to={link.path}>
+                        <span className="link-name">{link.name}</span>
+                        <motion.span 
+                          className="link-indicator"
+                          animate={{ width: activeLink === index ? '100%' : '0%' }}
+                        />
+                      </Link>
+                    </motion.li>
                   ))}
+                </ul>
+              </motion.div>
+
+              {/* Contact Column */}
+              <motion.div className="footer-col" variants={itemVariants}>
+                <h4 className="footer-title">
+                  <span className="title-text">Contact</span>
+                  <span className="title-underline"></span>
+                </h4>
+                <div className="contact-list">
+                  <div className="contact-row">
+                    <FaRegBuilding className="contact-icon" />
+                    <div className="contact-content">
+                      <span className="contact-label">Head Office</span>
+                      <p>266/2, Sri Rathanajothi Mawatha, Kuda Waskaduwa, Waskaduwa.</p>
+                    </div>
+                  </div>
+                  <div className="contact-row">
+                    <FaPhone className="contact-icon" />
+                    <div className="contact-content">
+                      <span className="contact-label">Hotline</span>
+                      <p>071 905 7057 | 011 283 1705</p>
+                    </div>
+                  </div>
+                  <div className="contact-row">
+                    <FaRegEnvelope className="contact-icon" />
+                    <div className="contact-content">
+                      <span className="contact-label">Email</span>
+                      <p>info@asbfashion.com</p>
+                    </div>
+                  </div>
+                  <div className="contact-row">
+                    <FaRegClock className="contact-icon" />
+                    <div className="contact-content">
+                      <span className="contact-label">Hours</span>
+                      <p>9:00 AM - 8:00 PM (Mon-Sun)</p>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
 
-              {/* Contact Information */}
-              <motion.div className="col-xl-3 col-lg-3 col-md-6" variants={itemVariants}>
-                <h5 className="footer-heading-premium">Get In Touch</h5>
-                <div className="contact-info-premium">
-                  {[
-                    { 
-                      icon: FaMapMarkerAlt, 
-                      title: "Visit Our Store", 
-                      content: "12/D/2, High Level Road, Thunnana, Hanwella, Sri Lanka",
-                      link: "https://maps.app.goo.gl/xZMSKuc7cDdJSH3b9",
-                      color: "#FF6B35"
-                    },
-                    { 
-                      icon: FaPhone, 
-                      title: "Call Us Now", 
-                      content: ["+94 777 189 893", "   +94 112831705"],
-                      links: ["tel:+94777189893", "tel:+94112831705"],
-                      color: "#28a745"
-                    },
-                    { 
-                      icon: FaEnvelope, 
-                      title: "Email Us", 
-                      content: "kmdproduction2025@gmail.com",
-                      link: "mailto:kmdproduction2025@gmail.com",
-                      color: "#dc3545"
-                    },
-                    { 
-                      icon: FaClock, 
-                      title: "Business Hours", 
-                      content: "8:00 AM - 8:00 PM (Monday - Sunday)",
-                      color: "#6f42c1"
-                    }
-                  ].map((contact, index) => (
-                    <motion.div 
-                      key={index}
-                      className="contact-item-premium"
-                      whileHover={{ scale: 1.02, y: -2 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                    >
-                      <div className="contact-icon-wrapper" style={{ backgroundColor: `${contact.color}15` }}>
-                        <contact.icon style={{ color: contact.color }} />
-                      </div>
-                      <div className="contact-details">
-                        <h6>{contact.title}</h6>
-                        {Array.isArray(contact.content) ? (
-                          contact.content.map((item, itemIndex) => (
-                            <a 
-                              key={itemIndex}
-                              href={contact.links[itemIndex]} 
-                              className="contact-link"
-                            >
-                              {item}
-                            </a>
-                          ))
-                        ) : contact.link ? (
-                          <a href={contact.link} className="contact-link">
-                            {contact.content}
-                          </a>
-                        ) : (
-                          <p>{contact.content}</p>
-                        )}
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-
-              {/* Newsletter & Social */}
-              <motion.div className="col-xl-3 col-lg-6 col-md-6" variants={itemVariants}>
-                <div className="newsletter-social-section">
-                  <h5 className="footer-heading-premium">Stay Connected</h5>
+              {/* Newsletter Column */}
+              <motion.div className="footer-col" variants={itemVariants}>
+                <h4 className="footer-title">
+                  <span className="title-text">Newsletter</span>
+                  <span className="title-underline"></span>
+                </h4>
+                <div className="newsletter-container">
+                  <p className="newsletter-description">Subscribe to receive exclusive updates and offers</p>
                   
-                  {/* Newsletter Subscription */}
-                  <div className="newsletter-section">
-                    <p className="newsletter-text">
-                      Subscribe to get updates on new sweets and special offers!
-                    </p>
-                    
-                    <AnimatePresence mode="wait">
-                      {isSubscribed ? (
-                        <motion.div
-                          key="success"
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.8 }}
-                          className="subscription-success"
-                        >
-                          <FaStar className="text-warning me-2" />
-                          Thank you for subscribing!
-                        </motion.div>
-                      ) : (
-                        <motion.form 
-                          key="form"
-                          onSubmit={handleSubscribe}
-                          className="newsletter-form"
-                          initial={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                        >
-                          <InputGroup className="newsletter-input-group">
+                  {/* Error Message Display */}
+                  <AnimatePresence>
+                    {error && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="newsletter-error-message"
+                      >
+                        <FaExclamationTriangle className="error-icon" />
+                        <span>{error}</span>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  
+                  {/* Success Message Display */}
+                  <AnimatePresence>
+                    {success && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="newsletter-success-message"
+                      >
+                        <FaCheckCircle className="success-icon" />
+                        <span>{success}</span>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  
+                  {/* Subscription Form */}
+                  <AnimatePresence mode="wait">
+                    {!isSubscribed && !success ? (
+                      <motion.form
+                        key="form"
+                        onSubmit={handleSubscribe}
+                        className="newsletter-form"
+                        initial={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                      >
+                        <div className="input-container">
+                          <InputGroup>
                             <Form.Control
                               type="email"
-                              placeholder="Enter your email"
+                              placeholder="Your email address"
                               value={email}
                               onChange={(e) => setEmail(e.target.value)}
                               required
-                              className="newsletter-input"
+                              disabled={isLoading}
+                              className={`newsletter-input ${error ? 'error-input' : ''}`}
                             />
-                            <motion.button
-                              type="submit"
-                              className="newsletter-btn"
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
+                            <Button 
+                              type="submit" 
+                              className="newsletter-submit"
+                              disabled={isLoading}
                             >
-                              <FaEnvelope />
-                            </motion.button>
+                              {isLoading ? (
+                                <span className="spinner-border spinner-border-sm" />
+                              ) : (
+                                <FaRegPaperPlane />
+                              )}
+                            </Button>
                           </InputGroup>
-                        </motion.form>
-                      )}
-                    </AnimatePresence>
-                  </div>
+                        </div>
+                        <p className="privacy-note">
+                          <FaShieldAlt /> Your data is protected. We never share your information.
+                        </p>
+                      </motion.form>
+                    ) : (
+                      <motion.div
+                        key="success"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="subscribe-confirmation"
+                      >
+                        <FaCheckCircle className="confirmation-icon" />
+                        <div className="confirmation-text">
+                          <strong>Welcome to ASB Family!</strong>
+                          <span>You'll receive our latest updates soon</span>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
 
-                  {/* Social Links */}
-                  <div className="social-section-premium">
-                    <h6 className="social-title">Follow Our Journey</h6>
-                    <div className="social-links-grid">
-                      {[
-                        { 
-                          icon: FaFacebook, 
-                          url: "https://www.facebook.com/share/1Cd3cf2AhS/", 
-                          color: "#1877f2", 
-                          label: "Facebook",
-                          name: "Facebook"
-                        },
-                        { 
-                          icon: FaInstagram, 
-                          url: "https://www.instagram.com/kmdsweethouse?igsh=MXhyYTZxaXMzeGtx", 
-                          color: "#e4405f", 
-                          label: "Instagram",
-                          name: "Instagram"
-                        },
-                        { 
-                          icon: FaWhatsapp, 
-                          url: "https://wa.me/94777189893", 
-                          color: "#25d366", 
-                          label: "WhatsApp",
-                          name: "WhatsApp"
-                        },
-                        { 
-                          icon: FaEnvelope, 
-                          url: "mailto:kmdproduction2025@gmail.com", 
-                          color: "#ea4335", 
-                          label: "Email",
-                          name: "Email"
-                        }
-                      ].map((social, index) => (
+                  <div className="social-section">
+                    <span className="social-label">Connect with us</span>
+                    <div className="social-grid">
+                      {socialMedia.map((social, index) => (
                         <motion.a
                           key={index}
                           href={social.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="social-link-premium"
-                          style={{ 
-                            '--social-color': social.color,
-                            '--social-color-light': `${social.color}20`
-                          }}
-                          whileHover={{ 
-                            scale: 1.15, 
-                            y: -5,
-                            boxShadow: `0 8px 25px ${social.color}40`
-                          }}
-                          whileTap={{ scale: 0.9 }}
-                          aria-label={social.label}
-                          variants={pulseVariants}
-                          animate="pulse"
+                          className="social-link"
+                          whileHover={{ y: -3 }}
+                          whileTap={{ scale: 0.95 }}
+                          title={social.name}
                         >
-                          <social.icon />
-                          <span className="social-tooltip">{social.name}</span>
+                          {social.icon}
                         </motion.a>
                       ))}
                     </div>
-                  </div>
-
-                  {/* Trust Badges */}
-                  <div className="trust-badges">
-                    <motion.div 
-                      className="trust-badge"
-                      variants={floatVariants}
-                      animate="float"
-                    >
-                      <FaCrown className="text-warning" />
-                      <span>Premium Quality</span>
-                    </motion.div>
-                    <motion.div 
-                      className="trust-badge"
-                      variants={floatVariants}
-                      animate="float"
-                      transition={{ delay: 0.5 }}
-                    >
-                      <FaGem className="text-info" />
-                      <span>Since 2014</span>
-                    </motion.div>
                   </div>
                 </div>
               </motion.div>
@@ -383,80 +418,38 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Footer Bottom */}
-        <motion.div 
-          className="footer-bottom-premium"
-          variants={itemVariants}
-        >
+        <motion.div className="footer-bottom" variants={itemVariants}>
           <div className="container">
-            <div className="footer-bottom-content">
-              <div className="footer-copyright">
+            <div className="bottom-bar">
+              <div className="copyright-info">
                 <p>
-                  &copy; {currentYear} <strong>KMD Sweet House</strong>. All rights reserved.
+                  © {currentYear} <strong>ASB FASHION</strong>. All rights reserved.
+                  <Link to="/privacy">Privacy</Link>
+                  <Link to="/terms">Terms</Link>
+                  <Link to="/shipping">Shipping</Link>
                 </p>
               </div>
-              
-              <div className="footer-credits">
-                <motion.p
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ type: "spring", stiffness: 400 }}
-                >
-                  Crafted with 
-                  <span className="developer-name">Team Alpha Software Solution</span>
-                </motion.p>
-              </div>
-
-              <div className="footer-policies">
-                <a href="/privacy">Privacy Policy</a>
-                <a href="/terms">Terms of Service</a>
-                <a href="/shipping">Shipping Info</a>
-              </div>
+              <motion.div className="developer-credit" whileHover={{ scale: 1.02 }}>
+                <span className="credit-prefix">Powered by</span>
+                <a href="https://vexelit.com" target="_blank" rel="noopener noreferrer" className="company-credit">VEXEL IT</a>
+                <span className="developer-credit-name">Kavizz</span>
+                <div className="method-indicator"><FaMobile /> Memoth Method</div>
+              </motion.div>
             </div>
           </div>
         </motion.div>
-
-        {/* Decorative Floating Elements */}
-        <div className="footer-decoration-premium">
-          {[...Array(8)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="floating-sweet-element"
-              animate={{
-                y: [0, -20, 0],
-                x: [0, Math.random() * 10 - 5, 0],
-                rotate: [0, 180, 360],
-                scale: [1, 1.1, 1]
-              }}
-              transition={{
-                duration: Math.random() * 4 + 3,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: Math.random() * 2
-              }}
-            >
-              {['🍬', '🍭', '🍪', '🧁', '🎂', '🍫', '🥮', '🍡'][i]}
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Animated Background */}
-        <div className="footer-background">
-          <div className="bg-particle"></div>
-          <div className="bg-particle"></div>
-          <div className="bg-particle"></div>
-        </div>
       </motion.footer>
 
       {/* Scroll to Top Button */}
       <AnimatePresence>
         {showScrollTop && (
           <motion.button
-            className="scroll-to-top-btn"
+            className="scroll-top-btn"
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0 }}
             onClick={scrollToTop}
-            initial={{ opacity: 0, scale: 0, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0, y: 20 }}
-            whileHover={{ scale: 1.1, y: -2 }}
+            whileHover={{ y: -5 }}
             whileTap={{ scale: 0.9 }}
           >
             <FaArrowUp />

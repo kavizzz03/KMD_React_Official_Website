@@ -1,36 +1,48 @@
 import "./Navbar.css";
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Navbar as BSNavbar, Container, Nav, Badge, Dropdown } from "react-bootstrap";
+import { Navbar as BSNavbar, Container, Nav, Badge } from "react-bootstrap";
 import { motion, AnimatePresence } from "framer-motion";
-import { getCartCount } from "../utils/cartUtils";
+import { getCartCount, getWishlistCount } from "../utils/cartUtils";
 import { 
-  FaShoppingCart, 
+  FaShoppingBag, 
   FaHome, 
   FaBox, 
-  FaUser, 
   FaHeart, 
   FaSearch,
   FaBars,
   FaTimes,
-  FaUtensils,
+  FaTshirt,
   FaStar,
   FaPhone,
   FaMapMarkerAlt,
-  FaEnvelope,
-  FaSignInAlt,
-  FaUserPlus
+  FaStore,
+  FaFire,
+  FaTag,
+  FaCrown,
+  FaTruck,
+  FaInstagram,
+  FaFacebook,
+  FaYoutube
 } from "react-icons/fa";
+import { MdNewReleases } from "react-icons/md";
 
-const Navbar = ({ user, onAuth, onLogout }) => {
+const Navbar = () => {
   const [cartCount, setCartCount] = useState(getCartCount());
+  const [wishlistCount, setWishlistCount] = useState(getWishlistCount());
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
 
   useEffect(() => {
-    const updateCart = () => setCartCount(getCartCount());
-    window.addEventListener("cartUpdated", updateCart);
+    const updateCounts = () => {
+      setCartCount(getCartCount());
+      setWishlistCount(getWishlistCount());
+    };
+    
+    window.addEventListener("cartUpdated", updateCounts);
+    window.addEventListener("wishlistUpdated", updateCounts);
     
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -38,7 +50,8 @@ const Navbar = ({ user, onAuth, onLogout }) => {
     
     window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener("cartUpdated", updateCart);
+      window.removeEventListener("cartUpdated", updateCounts);
+      window.removeEventListener("wishlistUpdated", updateCounts);
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
@@ -50,9 +63,12 @@ const Navbar = ({ user, onAuth, onLogout }) => {
 
   const navItems = [
     { path: "/", label: "Home", icon: FaHome },
-    { path: "/products", label: "Products", icon: FaBox },
-    { path: "/about", label: "About", icon: FaStar },
-    { path: "/contact", label: "Contact", icon: FaPhone }
+    { path: "/men", label: "Men", icon: FaTshirt },
+    { path: "/women", label: "Women", icon: FaTshirt },
+    { path: "/kids", label: "Kids", icon: FaTshirt },
+    { path: "/collections", label: "Collections", icon: FaStar, badge: "New" },
+    { path: "/lookbook", label: "Lookbook", icon: MdNewReleases },
+    { path: "/stores", label: "Stores", icon: FaStore }
   ];
 
   const isActivePath = (path) => {
@@ -76,7 +92,7 @@ const Navbar = ({ user, onAuth, onLogout }) => {
   const mobileMenuVariants = {
     closed: {
       opacity: 0,
-      y: "-100%",
+      x: "100%",
       transition: {
         duration: 0.4,
         ease: "easeInOut"
@@ -84,7 +100,7 @@ const Navbar = ({ user, onAuth, onLogout }) => {
     },
     open: {
       opacity: 1,
-      y: 0,
+      x: 0,
       transition: {
         duration: 0.4,
         ease: "easeInOut"
@@ -92,12 +108,10 @@ const Navbar = ({ user, onAuth, onLogout }) => {
     }
   };
 
-  const mobileItemVariants = {
-    closed: { opacity: 0, x: -50 },
-    open: { 
-      opacity: 1, 
-      x: 0,
-      transition: { duration: 0.3 }
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
     }
   };
 
@@ -109,99 +123,135 @@ const Navbar = ({ user, onAuth, onLogout }) => {
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
+        {/* Top Bar */}
+        <div className="navbar-top-bar-red">
+          <Container>
+            <div className="top-bar-content-red">
+              <div className="top-bar-left-red">
+                <motion.div 
+                  className="location-badge-red"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <FaMapMarkerAlt className="me-1" />
+                  <span>17 Branches Islandwide</span>
+                </motion.div>
+                <span className="divider-red">|</span>
+                <motion.div 
+                  className="hotline-red"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <FaPhone className="me-1" />
+                  <span>071 905 7057</span>
+                </motion.div>
+                <span className="divider-red">|</span>
+                <motion.div 
+                  className="delivery-red"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <FaTruck className="me-1" />
+                  <span>Free Delivery Over LKR 5000</span>
+                </motion.div>
+              </div>
+              <div className="top-bar-right-red">
+                <Link to="/track-order">Track Order</Link>
+                <Link to="/stores">Store Locator</Link>
+                <Link to="/contact">Help Center</Link>
+                <div className="social-icons-top">
+                  <FaInstagram />
+                  <FaFacebook />
+                  <FaYoutube />
+                </div>
+              </div>
+            </div>
+          </Container>
+        </div>
+
         <Container>
-          <div className="navbar-content">
+          <div className="navbar-content-red">
             {/* Brand Logo */}
             <motion.div
-              className="navbar-brand-wrapper"
-              whileHover={{ scale: 1.05 }}
+              className="navbar-brand-wrapper-red"
+              whileHover={{ scale: 1.02 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
-              <BSNavbar.Brand as={Link} to="/" className="navbar-brand-premium">
+              <BSNavbar.Brand as={Link} to="/" className="navbar-brand-red">
                 <motion.div
-                  className="brand-logo"
+                  className="brand-logo-red"
                   whileHover={{ rotate: 360 }}
                   transition={{ duration: 0.6 }}
                 >
-                  <FaUtensils className="brand-icon" />
+                  <FaTshirt className="brand-icon-red" />
                 </motion.div>
-                <div className="brand-text">
-                  <span className="brand-main">KMD Sweet House</span>
-                  <span className="brand-tagline">Traditional Sweets</span>
+                <div className="brand-text-red">
+                  <span className="brand-main-red">ASB<span className="brand-highlight-red">FASHION</span></span>
+                  <span className="brand-tagline-red">Beyond Tradition</span>
                 </div>
               </BSNavbar.Brand>
             </motion.div>
 
-            {/* Desktop Navigation - Hidden on Mobile */}
-            <div className="navbar-desktop d-none d-lg-flex">
-              <Nav className="navbar-nav-premium">
-                {navItems.map((item, index) => {
-                  const IconComponent = item.icon;
-                  return (
-                    <motion.div
-                      key={item.path}
-                      className="nav-item-wrapper"
-                      initial={{ opacity: 0, y: -20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <Nav.Link
-                        as={Link}
-                        to={item.path}
-                        className={`nav-link-premium ${isActivePath(item.path) ? 'nav-link-active' : ''}`}
-                      >
-                        <IconComponent className="nav-icon" />
-                        <span className="nav-text">{item.label}</span>
-                        {isActivePath(item.path) && (
-                          <motion.div
-                            className="nav-active-indicator"
-                            layoutId="activeIndicator"
-                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                          />
-                        )}
-                      </Nav.Link>
-                    </motion.div>
-                  );
-                })}
-              </Nav>
+            {/* Search Bar - Desktop */}
+            <div className="navbar-search-desktop d-none d-lg-block">
+              <motion.form 
+                onSubmit={handleSearch} 
+                className="search-form-red"
+                whileHover={{ scale: 1.02 }}
+              >
+                <input
+                  type="text"
+                  placeholder="Search for fashion, accessories..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="search-input-red"
+                />
+                <motion.button 
+                  type="submit" 
+                  className="search-button-red"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <FaSearch />
+                </motion.button>
+              </motion.form>
             </div>
 
             {/* Right Side Actions */}
-            <div className="navbar-actions">
-              {/* Search Button - Hidden on Mobile */}
-              <motion.button
-                className="nav-action-btn search-btn d-none d-md-flex"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                aria-label="Search"
-              >
-                <FaSearch />
-              </motion.button>
-
-              {/* Wishlist Button - Hidden on Mobile */}
-              <motion.button
-                className="nav-action-btn wishlist-btn d-none d-md-flex"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                aria-label="Wishlist"
-              >
-                <FaHeart />
-                <Badge bg="danger" className="wishlist-badge">0</Badge>
-              </motion.button>
-
-              {/* Cart Button */}
+            <div className="navbar-actions-red">
+              {/* Wishlist Button */}
               <motion.div
-                className="nav-cart-wrapper"
+                className="nav-action-wrapper-red"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Nav.Link as={Link} to="/cart" className="nav-cart-btn">
-                  <FaShoppingCart className="cart-icon" />
+                <Nav.Link as={Link} to="/wishlist" className="nav-action-btn-red">
+                  <FaHeart className="action-icon-red" />
+                  <AnimatePresence mode="wait">
+                    {wishlistCount > 0 && (
+                      <motion.span
+                        className="action-badge-red"
+                        variants={cartBadgeVariants}
+                        initial="initial"
+                        animate="animate"
+                      >
+                        {wishlistCount}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                  <span className="action-text-red d-none d-md-inline">Wishlist</span>
+                </Nav.Link>
+              </motion.div>
+
+              {/* Cart Button */}
+              <motion.div
+                className="nav-action-wrapper-red"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Nav.Link as={Link} to="/cart" className="nav-action-btn-red cart-btn-red">
+                  <FaShoppingBag className="action-icon-red" />
                   <AnimatePresence mode="wait">
                     {cartCount > 0 && (
                       <motion.span
-                        key={cartCount}
-                        className="cart-badge-premium"
+                        className="action-badge-red cart-badge-red"
                         variants={cartBadgeVariants}
                         initial="initial"
                         animate="animate"
@@ -211,72 +261,13 @@ const Navbar = ({ user, onAuth, onLogout }) => {
                       </motion.span>
                     )}
                   </AnimatePresence>
-                  <span className="cart-text d-none d-md-inline">Cart</span>
+                  <span className="action-text-red d-none d-md-inline">Cart</span>
                 </Nav.Link>
               </motion.div>
 
-              {/* User Account - Hidden on Mobile */}
-              {user ? (
-                <Dropdown align="end" className="d-none d-lg-block">
-                  <Dropdown.Toggle as={motion.div} className="user-dropdown-toggle">
-                    <motion.div
-                      className="user-avatar"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <FaUser />
-                    </motion.div>
-                  </Dropdown.Toggle>
-
-                  <Dropdown.Menu className="user-dropdown-menu">
-                    <Dropdown.Item as={Link} to="/profile" className="dropdown-item-premium">
-                      <FaUser className="me-2" />
-                      My Profile
-                    </Dropdown.Item>
-                    <Dropdown.Item as={Link} to="/orders" className="dropdown-item-premium">
-                      <FaBox className="me-2" />
-                      My Orders
-                    </Dropdown.Item>
-                    <Dropdown.Divider />
-                    <Dropdown.Item 
-                      onClick={onLogout} 
-                      className="dropdown-item-premium text-danger"
-                    >
-                      Logout
-                    </Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
-              ) : (
-                <motion.div
-                  className="auth-buttons d-none d-lg-flex"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  <motion.button
-                    className="btn-login"
-                    onClick={() => onAuth('login')}
-                    whileHover={{ scale: 1.05, y: -1 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <FaSignInAlt className="me-2" />
-                    Login
-                  </motion.button>
-                  <motion.button
-                    className="btn-register"
-                    onClick={() => onAuth('register')}
-                    whileHover={{ scale: 1.05, y: -1 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <FaUserPlus className="me-2" />
-                    Register
-                  </motion.button>
-                </motion.div>
-              )}
-
-              {/* Mobile Menu Toggle - Visible only on Mobile */}
+              {/* Mobile Menu Toggle */}
               <motion.button
-                className="mobile-menu-toggle d-lg-none"
+                className="mobile-menu-toggle-red d-lg-none"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
@@ -306,14 +297,74 @@ const Navbar = ({ user, onAuth, onLogout }) => {
               </motion.button>
             </div>
           </div>
+
+          {/* Desktop Navigation Menu */}
+          <div className="navbar-menu-desktop d-none d-lg-block">
+            <Nav className="desktop-nav-red">
+              {navItems.map((item, index) => {
+                const IconComponent = item.icon;
+                return (
+                  <motion.div
+                    key={item.path}
+                    className="nav-item-container-red"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                  >
+                    <Nav.Link
+                      as={Link}
+                      to={item.path}
+                      className={`desktop-nav-link-red ${isActivePath(item.path) ? 'active' : ''}`}
+                    >
+                      <IconComponent className="nav-icon-red" />
+                      <span className="nav-label-red">{item.label}</span>
+                      {item.badge && (
+                        <Badge bg="danger" className="nav-badge-red ms-2">{item.badge}</Badge>
+                      )}
+                      {isActivePath(item.path) && (
+                        <motion.div
+                          className="nav-active-indicator-red"
+                          layoutId="desktopActiveIndicator"
+                        />
+                      )}
+                    </Nav.Link>
+                  </motion.div>
+                );
+              })}
+              
+              {/* Sale Link - Special */}
+              <motion.div
+                className="nav-item-container-red"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: navItems.length * 0.05 }}
+              >
+                <Nav.Link
+                  as={Link}
+                  to="/sale"
+                  className={`desktop-nav-link-red sale-link-red ${isActivePath('/sale') ? 'active' : ''}`}
+                >
+                  <FaFire className="nav-icon-red" />
+                  <span className="nav-label-red">SALE</span>
+                  <FaTag className="sale-tag-icon ms-2" />
+                  {isActivePath('/sale') && (
+                    <motion.div
+                      className="nav-active-indicator-red"
+                      layoutId="desktopActiveIndicator"
+                    />
+                  )}
+                </Nav.Link>
+              </motion.div>
+            </Nav>
+          </div>
         </Container>
 
-        {/* Full Screen Mobile Navigation Menu */}
+        {/* Mobile Menu Overlay */}
         <AnimatePresence>
           {isMobileMenuOpen && (
             <>
               <motion.div
-                className="mobile-menu-overlay"
+                className="mobile-menu-overlay-red"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -321,214 +372,95 @@ const Navbar = ({ user, onAuth, onLogout }) => {
               />
               
               <motion.div
-                className="mobile-menu-fullscreen"
+                className="mobile-menu-panel-red"
                 variants={mobileMenuVariants}
                 initial="closed"
                 animate="open"
                 exit="closed"
               >
-                {/* Mobile Menu Header */}
-                <div className="mobile-menu-header">
-                  <div className="mobile-brand">
-                    <motion.div
-                      className="mobile-brand-logo"
-                      whileHover={{ rotate: 360 }}
-                      transition={{ duration: 0.6 }}
-                    >
-                      <FaUtensils />
-                    </motion.div>
-                    <div className="mobile-brand-text">
-                      <h3>KMD Sweet House</h3>
-                      <p>Traditional Sri Lankan Sweets</p>
+                <div className="mobile-menu-header-red">
+                  <div className="mobile-brand-red">
+                    <FaTshirt className="mobile-brand-icon-red" />
+                    <div>
+                      <h3>ASB FASHION</h3>
+                      <p>Beyond Tradition</p>
                     </div>
-                    <motion.button
-                      className="mobile-menu-close"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <FaTimes />
-                    </motion.button>
                   </div>
+                  <button 
+                    className="mobile-menu-close-red"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <FaTimes />
+                  </button>
                 </div>
 
-                {/* Mobile Menu Content - Scrollable */}
-                <div className="mobile-menu-content-scrollable">
-                  {/* Navigation Links */}
-                  <div className="mobile-nav-section">
-                    <h4 className="mobile-section-title">Navigation</h4>
-                    <div className="mobile-nav-links">
-                      {navItems.map((item, index) => {
-                        const IconComponent = item.icon;
-                        return (
-                          <motion.div
-                            key={item.path}
-                            variants={mobileItemVariants}
-                            initial="closed"
-                            animate="open"
-                            transition={{ delay: index * 0.1 }}
-                          >
-                            <Link
-                              to={item.path}
-                              className={`mobile-nav-link-full ${isActivePath(item.path) ? 'mobile-nav-link-active' : ''}`}
-                              onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                              <IconComponent className="mobile-nav-icon" />
-                              <span className="mobile-nav-text">{item.label}</span>
-                              <motion.div
-                                className="mobile-nav-active-indicator"
-                                layoutId="mobileActiveIndicator"
-                              />
-                            </Link>
-                          </motion.div>
-                        );
-                      })}
-                    </div>
-                  </div>
+                <div className="mobile-menu-search-red">
+                  <form onSubmit={handleSearch}>
+                    <input
+                      type="text"
+                      placeholder="Search products..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    <button type="submit">
+                      <FaSearch />
+                    </button>
+                  </form>
+                </div>
 
-                  {/* User Section */}
-                  <div className="mobile-user-section">
-                    <h4 className="mobile-section-title">
-                      {user ? `Welcome, ${user.name || 'User'}` : 'Account'}
-                    </h4>
-                    
-                    {user ? (
-                      <div className="mobile-user-actions">
-                        <motion.div
-                          variants={mobileItemVariants}
-                          initial="closed"
-                          animate="open"
-                          transition={{ delay: 0.5 }}
+                <div className="mobile-menu-content-red">
+                  {/* Main Navigation */}
+                  <div className="mobile-nav-section-red">
+                    <h4 className="mobile-section-title-red">Menu</h4>
+                    {navItems.map((item) => {
+                      const IconComponent = item.icon;
+                      return (
+                        <Link
+                          key={item.path}
+                          to={item.path}
+                          className={`mobile-nav-link-red ${isActivePath(item.path) ? 'active' : ''}`}
+                          onClick={() => setIsMobileMenuOpen(false)}
                         >
-                          <Link to="/profile" className="mobile-user-action">
-                            <FaUser className="me-3" />
-                            <span>My Profile</span>
-                          </Link>
-                        </motion.div>
-                        <motion.div
-                          variants={mobileItemVariants}
-                          initial="closed"
-                          animate="open"
-                          transition={{ delay: 0.6 }}
-                        >
-                          <Link to="/orders" className="mobile-user-action">
-                            <FaBox className="me-3" />
-                            <span>My Orders</span>
-                          </Link>
-                        </motion.div>
-                        <motion.div
-                          variants={mobileItemVariants}
-                          initial="closed"
-                          animate="open"
-                          transition={{ delay: 0.7 }}
-                        >
-                          <button 
-                            onClick={() => {
-                              onLogout();
-                              setIsMobileMenuOpen(false);
-                            }}
-                            className="mobile-user-action text-danger"
-                          >
-                            <FaSignInAlt className="me-3" />
-                            <span>Logout</span>
-                          </button>
-                        </motion.div>
-                      </div>
-                    ) : (
-                      <div className="mobile-auth-actions">
-                        <motion.div
-                          variants={mobileItemVariants}
-                          initial="closed"
-                          animate="open"
-                          transition={{ delay: 0.5 }}
-                        >
-                          <button 
-                            className="btn-mobile-login-full"
-                            onClick={() => {
-                              setIsMobileMenuOpen(false);
-                              onAuth('login');
-                            }}
-                          >
-                            <FaSignInAlt className="me-3" />
-                            <span>Login</span>
-                          </button>
-                        </motion.div>
-                        <motion.div
-                          variants={mobileItemVariants}
-                          initial="closed"
-                          animate="open"
-                          transition={{ delay: 0.6 }}
-                        >
-                          <button 
-                            className="btn-mobile-register-full"
-                            onClick={() => {
-                              setIsMobileMenuOpen(false);
-                              onAuth('register');
-                            }}
-                          >
-                            <FaUserPlus className="me-3" />
-                            <span>Create Account</span>
-                          </button>
-                        </motion.div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Contact Information */}
-                  <div className="mobile-contact-section">
-                    <h4 className="mobile-section-title">Contact Us</h4>
-                    <div className="mobile-contact-info">
-                      <motion.div
-                        variants={mobileItemVariants}
-                        initial="closed"
-                        animate="open"
-                        transition={{ delay: 0.8 }}
-                        className="mobile-contact-item"
-                      >
-                        <FaPhone className="contact-icon" />
-                        <div>
-                          <div>+94 777 189 893</div>
-                          <div>+94 112831705</div>
-                        </div>
-                      </motion.div>
-                      
-                      <motion.div
-                        variants={mobileItemVariants}
-                        initial="closed"
-                        animate="open"
-                        transition={{ delay: 0.9 }}
-                        className="mobile-contact-item"
-                      >
-                        <FaEnvelope className="contact-icon" />
-                        <div>kmdproduction2025@gmail.com</div>
-                      </motion.div>
-                      
-                      <motion.div
-                        variants={mobileItemVariants}
-                        initial="closed"
-                        animate="open"
-                        transition={{ delay: 1.0 }}
-                        className="mobile-contact-item"
-                      >
-                        <FaMapMarkerAlt className="contact-icon" />
-                        <div>Hanwella, Sri Lanka</div>
-                      </motion.div>
-                    </div>
-                  </div>
-
-                  {/* Business Hours */}
-                  <div className="mobile-hours-section">
-                    <h4 className="mobile-section-title">Business Hours</h4>
-                    <motion.div
-                      variants={mobileItemVariants}
-                      initial="closed"
-                      animate="open"
-                      transition={{ delay: 1.1 }}
-                      className="mobile-hours-info"
+                          <IconComponent className="mobile-nav-icon-red" />
+                          <span>{item.label}</span>
+                          {item.badge && (
+                            <Badge bg="danger" className="ms-auto">{item.badge}</Badge>
+                          )}
+                        </Link>
+                      );
+                    })}
+                    <Link
+                      to="/sale"
+                      className={`mobile-nav-link-red sale-link-red ${isActivePath('/sale') ? 'active' : ''}`}
+                      onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      <p>Monday - Sunday: 8:00 AM - 8:00 PM</p>
-                      <small>Fresh batches throughout the day</small>
-                    </motion.div>
+                      <FaFire className="mobile-nav-icon-red" />
+                      <span>Sale</span>
+                      <FaTag className="sale-tag ms-auto" />
+                    </Link>
+                  </div>
+
+                  {/* Store Info */}
+                  <div className="mobile-nav-section-red">
+                    <h4 className="mobile-section-title-red">Need Help?</h4>
+                    <div className="mobile-store-info-red">
+                      <div className="info-item-red">
+                        <FaStore className="info-icon-red" />
+                        <span>17 Branches Islandwide</span>
+                      </div>
+                      <div className="info-item-red">
+                        <FaPhone className="info-icon-red" />
+                        <span>071 905 7057</span>
+                      </div>
+                      <div className="info-item-red">
+                        <FaMapMarkerAlt className="info-icon-red" />
+                        <span>Head Office: Wadduwa</span>
+                      </div>
+                      <div className="info-item-red">
+                        <FaTruck className="info-icon-red" />
+                        <span>Free Delivery Over LKR 5000</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -537,8 +469,8 @@ const Navbar = ({ user, onAuth, onLogout }) => {
         </AnimatePresence>
       </motion.div>
 
-      {/* Spacer to prevent content from being hidden under fixed navbar */}
-      <div className="navbar-spacer" />
+      {/* Spacer */}
+      <div className="navbar-spacer-red" />
     </>
   );
 };

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const API_BASE = "https://kmd.cpsharetxt.com/api";
+const API_BASE = "https://whats.asbfashion.com/api";
 
 const Suppliers = () => {
   const [suppliers, setSuppliers] = useState([]);
