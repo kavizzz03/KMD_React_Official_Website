@@ -1,48 +1,16 @@
+// App.js
 import React, { useEffect, useState, Suspense, lazy } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { 
-  FaHeart, 
-  FaShieldAlt, 
-  FaTruck, 
-  FaExchangeAlt,
-  FaShoppingBag,
-  FaArrowRight,
-  FaStar,
-  FaWhatsapp,
-  FaTshirt,
-  FaTag,
-  FaCrown,
-  FaGem,
-  FaLeaf,
-  FaRocket,
-  FaAward,
-  FaMedal,
-  FaTools,
-  FaCut,
-  FaRuler,
-  FaPaintBrush,
-  FaShoppingCart,
-  FaUser,
-  FaSearch,
-  FaBars,
-  FaTimes,
-  FaChevronLeft,
-  FaChevronRight,
-  FaChevronDown,
-  FaChevronUp,
-  FaPlus,
-  FaMinus,
-  FaTrash,
-  FaEdit,
-  FaCheck,
-  FaSpinner,
-  FaInfoCircle,
-  FaExclamationTriangle,
-  FaCheckCircle,
-  FaTimesCircle
+  FaHeart, FaShieldAlt, FaTruck, FaExchangeAlt, FaShoppingBag, FaArrowRight, 
+  FaStar, FaWhatsapp, FaTshirt, FaTag, FaCrown, FaGem, FaLeaf, FaRocket, 
+  FaAward, FaMedal, FaTools, FaCut, FaRuler, FaPaintBrush, FaShoppingCart, 
+  FaUser, FaSearch, FaBars, FaTimes, FaChevronLeft, FaChevronRight, FaChevronDown, 
+  FaChevronUp, FaPlus, FaMinus, FaTrash, FaEdit, FaCheck, FaSpinner, FaInfoCircle, 
+  FaExclamationTriangle, FaCheckCircle, FaTimesCircle
 } from "react-icons/fa";
 import { GiClothes, GiNecklace, GiSewingMachine, GiDress } from "react-icons/gi";
 import { MdLocalOffer, MdNewReleases, MdFiberManualRecord } from "react-icons/md";
@@ -51,7 +19,6 @@ import { MdLocalOffer, MdNewReleases, MdFiberManualRecord } from "react-icons/md
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
-import LoadingSpinner from "./components/LoadingSpinner";
 
 // Lazy loaded components
 const HomePage = lazy(() => import("./components/HomePage"));
@@ -71,822 +38,760 @@ const WishlistPage = lazy(() => import("./components/WishlistPage"));
 const GalleryPage = lazy(() => import("./components/GalleryPage"));
 const EmployeeSupport = lazy(() => import("./components/EmployeeSupport"));
 const GiftVoucher = lazy(() => import("./components/GiftVoucher"));
+const KidsCategory = lazy(() => import("./components/KidsCategory"));
+const MenCategory = lazy(() => import("./components/MenCategory"));
+const WomenCategory = lazy(() => import("./components/WomenCategory"));
 
-// Animation variants
-const pageVariants = {
-  initial: {
-    opacity: 0,
-    y: 30,
-    scale: 0.98
-  },
-  in: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      duration: 0.6,
-      ease: [0.25, 0.46, 0.45, 0.94]
-    }
-  },
-  out: {
-    opacity: 0,
-    y: -30,
-    scale: 1.02,
-    transition: {
-      duration: 0.4,
-      ease: [0.55, 0.085, 0.68, 0.53]
-    }
+// CSS Management System
+class CSSManager {
+  constructor() {
+    this.loadedStyles = new Map();
   }
-};
 
-const slideInVariants = {
-  initial: {
-    opacity: 0,
-    x: -100
-  },
-  in: {
-    opacity: 1,
-    x: 0,
-    transition: {
-      duration: 0.7,
-      ease: "easeOut"
-    }
-  },
-  out: {
-    opacity: 0,
-    x: 100,
-    transition: {
-      duration: 0.5,
-      ease: "easeIn"
-    }
+  loadCSS(pageName) {
+    const cssFiles = this.getCSSFilesForPage(pageName);
+    
+    cssFiles.forEach(cssFile => {
+      if (!this.loadedStyles.has(cssFile)) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = `/css/${cssFile}.css`;
+        link.setAttribute('data-page', pageName);
+        document.head.appendChild(link);
+        this.loadedStyles.set(cssFile, link);
+      }
+    });
   }
-};
 
-// Random fashion quotes
-const getRandomFashionQuote = () => {
-  const quotes = [
-    "Style is a way to say who you are without having to speak.",
-    "Fashion is the armor to survive the reality of everyday life.",
-    "Elegance is not standing out, but being remembered.",
-    "Fashion is about dressing according to what's fashionable.",
-    "Style is a reflection of your attitude and your personality.",
-    "Beyond Tradition - Redefining Sri Lankan Fashion",
-    "18 Branches Islandwide - Bringing Style to Your Doorstep",
-    "Dress like you're already famous.",
-    "Fashion fades, only style remains the same.",
-    "Make your own kind of fashion.",
-    "Dress like you're meeting your worst enemy.",
-    "Fashion is what you buy, style is what you do with it.",
-    "Wear your confidence like a crown.",
-    "Every outfit tells a story. Make yours unforgettable.",
-    "Fashion is the art of expressing yourself through fabric."
-  ];
-  return quotes[Math.floor(Math.random() * quotes.length)];
-};
+  unloadCSS(pageName) {
+    const links = document.querySelectorAll(`link[data-page="${pageName}"]`);
+    links.forEach(link => {
+      link.remove();
+      this.loadedStyles.delete(link.href);
+    });
+  }
 
-// Clothing Brand Loading Animation Component
-const ClothingBrandLoader = ({ pageName = "page" }) => {
-  const clothingItems = [
-    { icon: <FaTshirt />, delay: 0 },
-    { icon: <GiDress />, delay: 0.2 },
-    { icon: <GiClothes />, delay: 0.4 },
-    { icon: <GiNecklace />, delay: 0.6 },
-    { icon: <FaCut />, delay: 0.8 },
-    { icon: <FaRuler />, delay: 1.0 }
-  ];
+  getCSSFilesForPage(pageName) {
+    const cssMap = {
+      'home': ['home', 'common'],
+      'men': ['category', 'men', 'common'],
+      'women': ['category', 'women', 'common'],
+      'kids': ['category', 'kids', 'common'],
+      'products': ['products', 'common'],
+      'product-details': ['product-details', 'common'],
+      'cart': ['cart', 'common'],
+      'wishlist': ['wishlist', 'common'],
+      'about': ['about', 'common'],
+      'contact': ['contact', 'common'],
+      'stores': ['stores', 'common'],
+      'lookbook': ['lookbook', 'common'],
+      'sale': ['sale', 'common'],
+      'new-arrivals': ['new-arrivals', 'common'],
+      'featured': ['featured', 'common'],
+      'collection': ['collection', 'common'],
+      'gallery': ['gallery', 'common'],
+      'gift-voucher': ['gift-voucher', 'common'],
+      'employee-support': ['employee-support', 'common']
+    };
+    
+    return cssMap[pageName] || ['common'];
+  }
+}
+
+const cssManager = new CSSManager();
+
+// Enhanced Loading Component with Responsive Design
+const ModernLoader = ({ pageName = "fashion experience" }) => {
+  const [loadingText, setLoadingText] = useState("Loading");
+  const [dotCount, setDotCount] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    const interval = setInterval(() => {
+      setDotCount((prev) => (prev + 1) % 4);
+    }, 400);
+    
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
+
+  const getLoadingMessage = () => {
+    const messages = [
+      "Curating the latest trends",
+      "Styling your experience",
+      "Preparing fashion magic",
+      "Getting ready for you",
+      "Unveiling elegance",
+      "Crafting style stories"
+    ];
+    return messages[Math.floor(Math.random() * messages.length)];
+  };
+
+  const dots = ".".repeat(dotCount);
+  const loaderSize = isMobile ? 80 : 120;
+  const iconSize = isMobile ? 16 : 20;
 
   return (
     <motion.div 
-      className="min-vh-100 d-flex align-items-center justify-content-center"
-      style={{
-        background: 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)',
-        position: 'relative',
-        overflow: 'hidden'
-      }}
+      className="modern-loader"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
+      exit={{ opacity: 0 }}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'linear-gradient(135deg, #fff 0%, #fff5f5 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 9999,
+        overflow: 'hidden'
+      }}
     >
-      {/* Animated Fabric Pattern Background */}
-      <div className="position-absolute w-100 h-100" style={{ opacity: 0.1 }}>
-        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="fabricPattern" patternUnits="userSpaceOnUse" width="60" height="60">
-              <path d="M30 0 L60 30 L30 60 L0 30 Z" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.05)" strokeWidth="1"/>
-              <circle cx="30" cy="30" r="3" fill="rgba(255,255,255,0.1)"/>
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#fabricPattern)" />
-        </svg>
-      </div>
+      {/* Animated Background Pattern */}
+      <svg style={{ position: 'absolute', width: '100%', height: '100%', opacity: 0.1 }}>
+        <defs>
+          <pattern id="fashion-pattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M20,0 L20,40 M0,20 L40,20" stroke="#dc2626" strokeWidth="0.5"/>
+            <circle cx="20" cy="20" r="3" fill="#dc2626" opacity="0.3"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#fashion-pattern)" />
+      </svg>
 
-      {/* Floating Thread Elements */}
-      {[...Array(12)].map((_, i) => (
+      <div className="loader-container" style={{ 
+        textAlign: 'center', 
+        position: 'relative', 
+        zIndex: 1,
+        padding: '20px',
+        width: '100%',
+        maxWidth: '400px'
+      }}>
+        {/* Main Logo Animation */}
         <motion.div
-          key={i}
-          style={{
-            position: 'absolute',
-            width: '2px',
-            height: `${Math.random() * 80 + 40}px`,
-            background: `linear-gradient(180deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1))`,
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            transformOrigin: 'top',
-          }}
           animate={{
-            rotate: [0, 15, -15, 0],
-            y: [0, -20, 20, 0],
-            opacity: [0.3, 0.6, 0.3]
+            scale: [1, 1.1, 1],
+            rotate: [0, 360],
           }}
           transition={{
-            duration: Math.random() * 4 + 3,
+            duration: 2,
             repeat: Infinity,
-            delay: Math.random() * 5
+            ease: "easeInOut"
           }}
-        />
-      ))}
-
-      <div className="text-center text-white position-relative" style={{ zIndex: 2 }}>
-        {/* Animated Clothing Items Circle */}
-        <motion.div
-          className="position-relative mb-5"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", stiffness: 200, damping: 20, duration: 0.8 }}
-        >
-          <div className="position-relative" style={{ width: '180px', height: '180px', margin: '0 auto' }}>
-            {/* Rotating Ring */}
-            <motion.div
-              className="position-absolute w-100 h-100 rounded-circle"
-              style={{
-                border: '2px solid rgba(255,255,255,0.3)',
-                borderRadius: '50%'
-              }}
-              animate={{ rotate: 360 }}
-              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-            />
-            
-            {/* Secondary Ring */}
-            <motion.div
-              className="position-absolute w-100 h-100 rounded-circle"
-              style={{
-                border: '1px solid rgba(255,255,255,0.2)',
-                borderRadius: '50%',
-                top: '10px',
-                left: '10px',
-                width: '160px',
-                height: '160px'
-              }}
-              animate={{ rotate: -360 }}
-              transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-            />
-            
-            {/* Center Logo */}
-            <div className="position-absolute top-50 start-50 translate-middle">
-              <div className="bg-white rounded-circle p-3 shadow-lg" style={{ width: '100px', height: '100px' }}>
-                <img 
-                  src="/images/asb-logo.png" 
-                  alt="ASB Fashion Logo" 
-                  style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="45" fill="%23dc2626"/%3E%3Ctext x="50" y="70" text-anchor="middle" fill="white" font-size="40" font-weight="bold"%3EASB%3C/text%3E%3C/svg%3E';
-                  }}
-                />
-              </div>
-            </div>
-            
-            {/* Floating Clothing Icons */}
-            {clothingItems.map((item, index) => {
-              const angle = (index * 60) * (Math.PI / 180);
-              const radius = 110;
-              const x = Math.cos(angle) * radius;
-              const y = Math.sin(angle) * radius;
-              
-              return (
-                <motion.div
-                  key={index}
-                  className="position-absolute"
-                  style={{
-                    left: '50%',
-                    top: '50%',
-                    transform: `translate(${x}px, ${y}px) translate(-50%, -50%)`
-                  }}
-                  animate={{
-                    scale: [1, 1.2, 1],
-                    opacity: [0.7, 1, 0.7]
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    delay: item.delay
-                  }}
-                >
-                  <div className="bg-white rounded-circle p-2 shadow" style={{ width: '40px', height: '40px', color: '#dc2626', fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {item.icon}
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </motion.div>
-        
-        <motion.h1
-          initial={{ y: 30, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="display-4 fw-bold mb-3"
-          style={{ 
-            letterSpacing: '2px',
-            textShadow: '2px 2px 4px rgba(0,0,0,0.2)'
+          style={{
+            width: `${loaderSize}px`,
+            height: `${loaderSize}px`,
+            margin: '0 auto',
+            position: 'relative'
           }}
         >
-          ASB FASHION
-        </motion.h1>
-        
-        <motion.p
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="lead mb-3"
-        >
-          <FaCrown className="me-2" /> Beyond Tradition • Redefining Style <FaCrown className="ms-2" />
-        </motion.p>
-        
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="d-flex justify-content-center gap-3 mb-4 flex-wrap"
-        >
-          <span className="badge bg-white text-dark px-3 py-2">
-            <FaGem className="me-1" /> Premium Quality
-          </span>
-          <span className="badge bg-white text-dark px-3 py-2">
-            <FaLeaf className="me-1" /> Sustainable Fashion
-          </span>
-          <span className="badge bg-white text-dark px-3 py-2">
-            <FaTruck className="me-1" /> Free Delivery
-          </span>
-        </motion.div>
-        
-        {/* Stitching Animation */}
-        <motion.div
-          className="d-flex justify-content-center gap-2 mb-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-        >
-          {[...Array(5)].map((_, i) => (
-            <motion.div
-              key={i}
-              style={{
-                width: '30px',
-                height: '2px',
-                background: 'white',
-                borderRadius: '2px'
-              }}
+          <svg width={loaderSize} height={loaderSize} viewBox="0 0 100 100">
+            <motion.circle
+              cx="50"
+              cy="50"
+              r="48"
+              fill="none"
+              stroke="#dc2626"
+              strokeWidth="2"
+              strokeDasharray="4 4"
               animate={{
-                width: ['30px', '40px', '30px']
+                rotate: 360,
+              }}
+              transition={{
+                duration: 20,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+            />
+            <circle cx="50" cy="50" r="45" fill="url(#gradient)" />
+            <defs>
+              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#dc2626" />
+                <stop offset="100%" stopColor="#b91c1c" />
+              </linearGradient>
+            </defs>
+            <text
+              x="50"
+              y="68"
+              textAnchor="middle"
+              fill="white"
+              fontSize={isMobile ? "28" : "32"}
+              fontWeight="bold"
+              fontFamily="Arial, sans-serif"
+            >
+              ASB
+            </text>
+            <motion.path
+              d="M30 35 L70 35 L65 65 L35 65 Z"
+              fill="none"
+              stroke="white"
+              strokeWidth="2"
+              strokeDasharray="5 5"
+              animate={{
+                strokeDashoffset: [0, 20],
               }}
               transition={{
                 duration: 1,
                 repeat: Infinity,
-                delay: i * 0.1
+                ease: "linear"
               }}
             />
-          ))}
+          </svg>
         </motion.div>
-        
+
+        {/* Brand Name */}
         <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.7 }}
-          className="mt-2"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          style={{ marginTop: '20px' }}
         >
-          <p className="text-white-50 fst-italic mb-2">
-            {getRandomFashionQuote()}
-          </p>
-          <p className="text-white-50 small">
-            <FaStar className="me-1" /> {pageName} • 18 Branches Islandwide
+          <h2 style={{ 
+            fontSize: isMobile ? '20px' : '28px', 
+            fontWeight: 'bold', 
+            background: 'linear-gradient(135deg, #dc2626, #b91c1c)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            marginBottom: '8px'
+          }}>
+            ASB FASHION
+          </h2>
+          <p style={{ color: '#666', fontSize: isMobile ? '10px' : '14px', letterSpacing: '2px' }}>
+            Beyond Tradition
           </p>
         </motion.div>
-        
-        {/* Animated Loading Dots */}
-        <motion.div 
-          className="d-flex justify-content-center gap-2 mt-4"
+
+        {/* Loading Message */}
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
+          transition={{ delay: 0.6 }}
+          style={{ marginTop: '30px' }}
         >
-          {[...Array(3)].map((_, i) => (
+          <p style={{ 
+            fontSize: isMobile ? '12px' : '14px', 
+            color: '#dc2626', 
+            fontWeight: '500',
+            textTransform: 'uppercase',
+            letterSpacing: '2px'
+          }}>
+            {getLoadingMessage()}
+          </p>
+          <div style={{ marginTop: '15px' }}>
+            <span style={{ fontSize: isMobile ? '10px' : '12px', color: '#999' }}>
+              {loadingText}{dots}
+            </span>
+          </div>
+        </motion.div>
+
+        {/* Progress Bar */}
+        <motion.div
+          initial={{ width: 0, opacity: 0 }}
+          animate={{ width: isMobile ? '150px' : '200px', opacity: 1 }}
+          transition={{ delay: 0.8 }}
+          style={{
+            marginTop: '30px',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            width: isMobile ? '150px' : '200px'
+          }}
+        >
+          <div style={{
+            height: '2px',
+            background: '#f0f0f0',
+            borderRadius: '2px',
+            overflow: 'hidden'
+          }}>
             <motion.div
-              key={i}
-              style={{
-                width: '8px',
-                height: '8px',
-                background: 'white',
-                borderRadius: '50%'
-              }}
-              animate={{
-                y: [0, -10, 0],
-                opacity: [0.5, 1, 0.5]
-              }}
+              initial={{ width: '0%' }}
+              animate={{ width: '100%' }}
               transition={{
-                duration: 0.8,
-                repeat: Infinity,
-                delay: i * 0.2
+                duration: 1.5,
+                ease: "easeInOut",
+                repeat: Infinity
+              }}
+              style={{
+                height: '100%',
+                background: 'linear-gradient(90deg, #dc2626, #b91c1c)',
+                borderRadius: '2px'
               }}
             />
-          ))}
+          </div>
+        </motion.div>
+
+        {/* Fashion Icons Animation - Hidden on mobile for performance */}
+        {!isMobile && (
+          <div style={{ 
+            position: 'absolute', 
+            top: '50%', 
+            left: '50%', 
+            transform: 'translate(-50%, -50%)',
+            width: '300px',
+            height: '300px',
+            pointerEvents: 'none'
+          }}>
+            {[...Array(8)].map((_, i) => (
+              <motion.div
+                key={i}
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{
+                  scale: [0, 1, 0],
+                  opacity: [0, 0.3, 0],
+                  x: Math.cos(i * Math.PI * 2 / 8) * 150,
+                  y: Math.sin(i * Math.PI * 2 / 8) * 150,
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  delay: i * 0.3,
+                  ease: "easeInOut"
+                }}
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  marginLeft: '-10px',
+                  marginTop: '-10px'
+                }}
+              >
+                {i % 2 === 0 ? (
+                  <FaTshirt size={iconSize} color="#dc2626" />
+                ) : (
+                  <FaStar size={iconSize - 4} color="#dc2626" />
+                )}
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <style>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        
+        .modern-loader {
+          animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+          .modern-loader {
+            background: linear-gradient(135deg, #fff 0%, #fff5f5 100%);
+          }
+        }
+      `}</style>
+    </motion.div>
+  );
+};
+
+// Page Loader Component
+const PageLoader = ({ pageName = "page" }) => <ModernLoader pageName={pageName} />;
+
+// Enhanced 404 Page with Responsive Design
+const NotFoundPage = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #f5f5f5 0%, #fff 100%)',
+        padding: isMobile ? '20px' : '40px'
+      }}
+    >
+      <div style={{ textAlign: 'center', maxWidth: '500px', width: '100%' }}>
+        <motion.div
+          animate={{
+            scale: [1, 1.1, 1],
+            rotate: [0, 10, -10, 0]
+          }}
+          transition={{
+            duration: 0.5,
+            repeat: Infinity,
+            repeatDelay: 2
+          }}
+          style={{ marginBottom: '30px' }}
+        >
+          <div style={{
+            width: isMobile ? '80px' : '120px',
+            height: isMobile ? '80px' : '120px',
+            background: 'linear-gradient(135deg, #dc2626, #b91c1c)',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto',
+            boxShadow: '0 10px 30px rgba(220, 38, 38, 0.3)'
+          }}>
+            <FaTshirt size={isMobile ? 40 : 60} color="white" />
+          </div>
+        </motion.div>
+        
+        <motion.h1
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", stiffness: 200 }}
+          style={{ fontSize: isMobile ? '48px' : '72px', fontWeight: 'bold', color: '#dc2626', marginBottom: '20px' }}
+        >
+          404
+        </motion.h1>
+        
+        <h2 style={{ fontSize: isMobile ? '20px' : '24px', color: '#333', marginBottom: '15px' }}>
+          Style Not Found
+        </h2>
+        
+        <p style={{ color: '#666', marginBottom: '30px', fontSize: isMobile ? '14px' : '16px', padding: '0 20px' }}>
+          Oops! This fashion piece seems to be missing from our collection.
+        </p>
+        
+        <div style={{ 
+          display: 'flex', 
+          gap: '15px', 
+          justifyContent: 'center',
+          flexDirection: isMobile ? 'column' : 'row',
+          padding: '0 20px'
+        }}>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => window.history.back()}
+            style={{
+              padding: isMobile ? '10px 20px' : '12px 30px',
+              background: '#dc2626',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontWeight: '600',
+              fontSize: isMobile ? '14px' : '16px'
+            }}
+          >
+            Go Back
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => window.location.href = '/'}
+            style={{
+              padding: isMobile ? '10px 20px' : '12px 30px',
+              background: 'transparent',
+              color: '#dc2626',
+              border: '2px solid #dc2626',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontWeight: '600',
+              fontSize: isMobile ? '14px' : '16px'
+            }}
+          >
+            Home Page
+          </motion.button>
+        </div>
+        
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          style={{ marginTop: '40px' }}
+        >
+          <p style={{ color: '#999', marginBottom: '15px', fontSize: isMobile ? '12px' : '14px' }}>
+            Explore our collections:
+          </p>
+          <div style={{ 
+            display: 'flex', 
+            gap: '10px', 
+            justifyContent: 'center', 
+            flexWrap: 'wrap',
+            padding: '0 10px'
+          }}>
+            {['Men', 'Women', 'Kids', 'Accessories', 'Sale'].map((item) => (
+              <motion.span
+                key={item}
+                whileHover={{ scale: 1.05 }}
+                onClick={() => window.location.href = `/${item.toLowerCase()}`}
+                style={{
+                  padding: isMobile ? '4px 12px' : '6px 16px',
+                  background: '#f5f5f5',
+                  borderRadius: '20px',
+                  cursor: 'pointer',
+                  fontSize: isMobile ? '12px' : '14px',
+                  color: '#666',
+                  transition: 'all 0.3s'
+                }}
+              >
+                {item}
+              </motion.span>
+            ))}
+          </div>
         </motion.div>
       </div>
     </motion.div>
   );
 };
 
-// Page Loader Component
-const PageLoader = ({ pageName = "page" }) => <ClothingBrandLoader pageName={pageName} />;
-
-// 404 Page
-const NotFoundPage = () => (
-  <motion.div
-    key="not-found"
-    initial="initial"
-    animate="in"
-    exit="out"
-    variants={pageVariants}
-    className="min-vh-100 d-flex align-items-center justify-content-center"
-    style={{
-      background: 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)'
-    }}
-  >
-    <div className="text-center p-4 text-white">
-      <motion.div
-        initial={{ scale: 0.5, rotate: -10 }}
-        animate={{ scale: 1, rotate: 0 }}
-        transition={{ 
-          type: "spring", 
-          stiffness: 200,
-          delay: 0.2 
-        }}
-        className="mb-4"
-      >
-        <div className="bg-white rounded-circle p-3 d-inline-block mb-3">
-          <FaTshirt size={60} color="#dc2626" />
-        </div>
-        <span className="display-1 fw-bold text-warning d-block">404</span>
-      </motion.div>
-      
-      <motion.div
-        initial={{ y: 30, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.4 }}
-        className="mb-3"
-      >
-        <h2 className="h1 mb-3">Style Not Found!</h2>
-        <p className="fs-5 mb-4 opacity-75">
-          Oops! This fashion piece seems to be out of our collection.
-        </p>
-      </motion.div>
-      
-      <motion.div
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.6 }}
-        className="d-flex flex-wrap gap-3 justify-content-center"
-      >
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="btn btn-warning btn-lg px-4 fw-bold"
-          onClick={() => window.history.back()}
-        >
-          Go Back
-        </motion.button>
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="btn btn-outline-light btn-lg px-4"
-          onClick={() => window.location.href = '/'}
-        >
-          Home Page
-        </motion.button>
-      </motion.div>
-      
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8 }}
-        className="mt-5"
-      >
-        <p className="text-white-50 mb-3">Explore our popular collections:</p>
-        <div className="d-flex flex-wrap gap-2 justify-content-center">
-          {['Men', 'Women', 'Kids', 'Accessories', 'Sale', 'New Arrivals'].map((item, index) => (
-            <motion.span
-              key={index}
-              whileHover={{ scale: 1.1 }}
-              className="badge bg-white text-dark px-3 py-2 cursor-pointer"
-              onClick={() => window.location.href = `/${item.toLowerCase().replace(' ', '-')}`}
-              style={{ cursor: 'pointer' }}
-            >
-              {item}
-            </motion.span>
-          ))}
-        </div>
-      </motion.div>
-    </div>
-  </motion.div>
-);
-
-// Animated Routes
-const AnimatedRoutes = () => {
+// Page Wrapper for CSS Management
+const PageWrapper = ({ children, pageName }) => {
   const location = useLocation();
-  const [previousPath, setPreviousPath] = useState('/');
 
   useEffect(() => {
-    setPreviousPath(location.pathname);
-  }, [location.pathname]);
+    // Load page-specific CSS
+    cssManager.loadCSS(pageName);
+    
+    // Scroll to top on page change
+    window.scrollTo(0, 0);
+    
+    // Cleanup function to remove CSS when leaving page
+    return () => {
+      cssManager.unloadCSS(pageName);
+    };
+  }, [pageName, location.pathname]);
 
-  const getAnimationVariant = (currentPath, previousPath) => {
-    if (previousPath.includes('/product/') && currentPath.includes('/product/')) {
-      return slideInVariants;
-    }
-    return pageVariants;
-  };
+  return children;
+};
 
+// Animated Routes Component with CSS Management
+const AnimatedRoutes = () => {
+  const location = useLocation();
+  
   return (
-    <AnimatePresence mode="wait" initial={false}>
+    <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        {/* Home */}
-        <Route
-          path="/"
-          element={
-            <motion.div
-              key="home"
-              initial="initial"
-              animate="in"
-              exit="out"
-              variants={getAnimationVariant(location.pathname, previousPath)}
-            >
-              <Suspense fallback={<PageLoader pageName="fashion destination" />}>
-                <HomePage />
-              </Suspense>
-            </motion.div>
-          }
-        />
-        <Route path="/gift-voucher" element={<GiftVoucher />} />
+        <Route path="/" element={
+          <PageWrapper pageName="home">
+            <Suspense fallback={<PageLoader pageName="home" />}>
+              <HomePage />
+            </Suspense>
+          </PageWrapper>
+        } />
 
-        {/* About Us */}
-        <Route
-          path="/about"
-          element={
-            <motion.div
-              key="about"
-              initial="initial"
-              animate="in"
-              exit="out"
-              variants={getAnimationVariant(location.pathname, previousPath)}
-            >
-              <Suspense fallback={<PageLoader pageName="our story" />}>
-                <AboutPage />
-              </Suspense>
-            </motion.div>
-          }
-        />
-        <Route path="/gallery" element={<GalleryPage />} />
-        <Route path="/employee-support" element={<EmployeeSupport />} />
-        <Route path="/employee/complaint" element={<EmployeeSupport />} />
+        {/* Category Routes - Lazy loaded with Suspense */}
+        <Route path="/men" element={
+          <PageWrapper pageName="men">
+            <Suspense fallback={<PageLoader pageName="men" />}>
+              <MenCategory />
+            </Suspense>
+          </PageWrapper>
+        } />
+        
+        <Route path="/women" element={
+          <PageWrapper pageName="women">
+            <Suspense fallback={<PageLoader pageName="women" />}>
+              <WomenCategory />
+            </Suspense>
+          </PageWrapper>
+        } />
+        
+        <Route path="/kids" element={
+          <PageWrapper pageName="kids">
+            <Suspense fallback={<PageLoader pageName="kids" />}>
+              <KidsCategory />
+            </Suspense>
+          </PageWrapper>
+        } />
 
-        {/* Contact Us */}
-        <Route
-          path="/contact"
-          element={
-            <motion.div
-              key="contact"
-              initial="initial"
-              animate="in"
-              exit="out"
-              variants={getAnimationVariant(location.pathname, previousPath)}
-            >
-              <Suspense fallback={<PageLoader pageName="contact" />}>
-                <ContactPage />
-              </Suspense>
-            </motion.div>
-          }
-        />
+        {/* Product Routes */}
+        <Route path="/products" element={
+          <PageWrapper pageName="products">
+            <Suspense fallback={<PageLoader pageName="products" />}>
+              <ProductsPage />
+            </Suspense>
+          </PageWrapper>
+        } />
 
-        {/* Products */}
-        <Route
-          path="/products"
-          element={
+        <Route path="/product/:id" element={
+          <PageWrapper pageName="product-details">
+            <Suspense fallback={<PageLoader pageName="product details" />}>
+              <ProductDetails />
+            </Suspense>
+          </PageWrapper>
+        } />
+
+        {/* Collection Route */}
+        <Route path="/collection/:collectionId" element={
+          <PageWrapper pageName="collection">
             <Suspense fallback={<PageLoader pageName="collection" />}>
-              <motion.div
-                key="products"
-                initial="initial"
-                animate="in"
-                exit="out"
-                variants={getAnimationVariant(location.pathname, previousPath)}
-              >
-                <ProductsPage />
-              </motion.div>
+              <CollectionPage />
             </Suspense>
-          }
-        />
+          </PageWrapper>
+        } />
 
-        {/* Product Details */}
-        <Route
-          path="/product/:id"
-          element={
-            <Suspense fallback={<PageLoader pageName="style details" />}>
-              <motion.div
-                key={`product-${location.pathname}`}
-                initial="initial"
-                animate="in"
-                exit="out"
-                variants={getAnimationVariant(location.pathname, previousPath)}
-              >
-                <ProductDetails />
-              </motion.div>
+        {/* Cart & Wishlist */}
+        <Route path="/cart" element={
+          <PageWrapper pageName="cart">
+            <Suspense fallback={<PageLoader pageName="cart" />}>
+              <CartPage />
             </Suspense>
-          }
-        />
+          </PageWrapper>
+        } />
 
-        {/* Cart */}
-        <Route
-          path="/cart"
-          element={
-            <Suspense fallback={<PageLoader pageName="shopping bag" />}>
-              <motion.div
-                key="cart"
-                initial="initial"
-                animate="in"
-                exit="out"
-                variants={getAnimationVariant(location.pathname, previousPath)}
-              >
-                <CartPage />
-              </motion.div>
-            </Suspense>
-          }
-        />
-
-        {/* Stores */}
-        <Route
-          path="/stores"
-          element={
-            <Suspense fallback={<PageLoader pageName="store locations" />}>
-              <motion.div
-                key="stores"
-                initial="initial"
-                animate="in"
-                exit="out"
-                variants={getAnimationVariant(location.pathname, previousPath)}
-              >
-                <StoreLocatorPage />
-              </motion.div>
-            </Suspense>
-          }
-        />
-
-        {/* Lookbook */}
-        <Route
-          path="/lookbook"
-          element={
-            <Suspense fallback={<PageLoader pageName="lookbook" />}>
-              <motion.div
-                key="lookbook"
-                initial="initial"
-                animate="in"
-                exit="out"
-                variants={getAnimationVariant(location.pathname, previousPath)}
-              >
-                <LookbookPage />
-              </motion.div>
-            </Suspense>
-          }
-        />
-
-        {/* Sale */}
-        <Route
-          path="/sale"
-          element={
-            <Suspense fallback={<PageLoader pageName="sale" />}>
-              <motion.div
-                key="sale"
-                initial="initial"
-                animate="in"
-                exit="out"
-                variants={getAnimationVariant(location.pathname, previousPath)}
-              >
-                <SalePage />
-              </motion.div>
-            </Suspense>
-          }
-        />
-
-        {/* Category Routes */}
-        <Route
-          path="/men"
-          element={
-            <Suspense fallback={<PageLoader pageName="men's collection" />}>
-              <motion.div
-                key="men"
-                initial="initial"
-                animate="in"
-                exit="out"
-                variants={getAnimationVariant(location.pathname, previousPath)}
-              >
-                <ProductsPage category="men" />
-              </motion.div>
-            </Suspense>
-          }
-        />
-
-        <Route
-          path="/women"
-          element={
-            <Suspense fallback={<PageLoader pageName="women's collection" />}>
-              <motion.div
-                key="women"
-                initial="initial"
-                animate="in"
-                exit="out"
-                variants={getAnimationVariant(location.pathname, previousPath)}
-              >
-                <ProductsPage category="women" />
-              </motion.div>
-            </Suspense>
-          }
-        />
-
-        <Route
-          path="/kids"
-          element={
-            <Suspense fallback={<PageLoader pageName="kids' collection" />}>
-              <motion.div
-                key="kids"
-                initial="initial"
-                animate="in"
-                exit="out"
-                variants={getAnimationVariant(location.pathname, previousPath)}
-              >
-                <ProductsPage category="kids" />
-              </motion.div>
-            </Suspense>
-          }
-        />
-
-        <Route
-          path="/accessories"
-          element={
-            <Suspense fallback={<PageLoader pageName="accessories" />}>
-              <motion.div
-                key="accessories"
-                initial="initial"
-                animate="in"
-                exit="out"
-                variants={getAnimationVariant(location.pathname, previousPath)}
-              >
-                <ProductsPage category="accessories" />
-              </motion.div>
-            </Suspense>
-          }
-        />
-
-        <Route
-          path="/traditional"
-          element={
-            <Suspense fallback={<PageLoader pageName="traditional wear" />}>
-              <motion.div
-                key="traditional"
-                initial="initial"
-                animate="in"
-                exit="out"
-                variants={getAnimationVariant(location.pathname, previousPath)}
-              >
-                <ProductsPage category="traditional" />
-              </motion.div>
-            </Suspense>
-          }
-        />
-
-        {/* Collection */}
-        <Route
-          path="/collection/:collectionId"
-          element={
-            <Suspense fallback={<PageLoader pageName="collection" />}>
-              <motion.div
-                key="collection"
-                initial="initial"
-                animate="in"
-                variants={getAnimationVariant(location.pathname, previousPath)}
-              >
-                <CollectionPage />
-              </motion.div>
-            </Suspense>
-          }
-        />
-
-        {/* Wishlist */}
-        <Route
-          path="/wishlist"
-          element={
+        <Route path="/wishlist" element={
+          <PageWrapper pageName="wishlist">
             <Suspense fallback={<PageLoader pageName="wishlist" />}>
-              <motion.div
-                key="wishlist"
-                initial="initial"
-                animate="in"
-                exit="out"
-                variants={getAnimationVariant(location.pathname, previousPath)}
-              >
-                <WishlistPage />
-              </motion.div>
+              <WishlistPage />
             </Suspense>
-          }
-        />
+          </PageWrapper>
+        } />
 
-        {/* New Arrivals */}
-        <Route
-          path="/new-arrivals"
-          element={
+        {/* Information Pages */}
+        <Route path="/about" element={
+          <PageWrapper pageName="about">
+            <Suspense fallback={<PageLoader pageName="about us" />}>
+              <AboutPage />
+            </Suspense>
+          </PageWrapper>
+        } />
+
+        <Route path="/contact" element={
+          <PageWrapper pageName="contact">
+            <Suspense fallback={<PageLoader pageName="contact" />}>
+              <ContactPage />
+            </Suspense>
+          </PageWrapper>
+        } />
+
+        <Route path="/stores" element={
+          <PageWrapper pageName="stores">
+            <Suspense fallback={<PageLoader pageName="store locations" />}>
+              <StoreLocatorPage />
+            </Suspense>
+          </PageWrapper>
+        } />
+
+        <Route path="/lookbook" element={
+          <PageWrapper pageName="lookbook">
+            <Suspense fallback={<PageLoader pageName="lookbook" />}>
+              <LookbookPage />
+            </Suspense>
+          </PageWrapper>
+        } />
+
+        {/* Shopping Routes */}
+        <Route path="/sale" element={
+          <PageWrapper pageName="sale">
+            <Suspense fallback={<PageLoader pageName="sale" />}>
+              <SalePage />
+            </Suspense>
+          </PageWrapper>
+        } />
+
+        <Route path="/new-arrivals" element={
+          <PageWrapper pageName="new-arrivals">
             <Suspense fallback={<PageLoader pageName="new arrivals" />}>
-              <motion.div
-                key="new-arrivals"
-                initial="initial"
-                animate="in"
-                exit="out"
-                variants={getAnimationVariant(location.pathname, previousPath)}
-              >
-                <NewArrivalsPage />
-              </motion.div>
+              <NewArrivalsPage />
             </Suspense>
-          }
-        />
+          </PageWrapper>
+        } />
 
-        {/* Featured */}
-        <Route
-          path="/featured"
-          element={
+        <Route path="/featured" element={
+          <PageWrapper pageName="featured">
             <Suspense fallback={<PageLoader pageName="featured" />}>
-              <motion.div
-                key="featured"
-                initial="initial"
-                animate="in"
-                exit="out"
-                variants={getAnimationVariant(location.pathname, previousPath)}
-              >
-                <FeaturedPage />
-              </motion.div>
+              <FeaturedPage />
             </Suspense>
-          }
-        />
+          </PageWrapper>
+        } />
 
-        {/* 404 */}
+        <Route path="/gallery" element={
+          <PageWrapper pageName="gallery">
+            <Suspense fallback={<PageLoader pageName="gallery" />}>
+              <GalleryPage />
+            </Suspense>
+          </PageWrapper>
+        } />
+
+        <Route path="/gift-voucher" element={
+          <PageWrapper pageName="gift-voucher">
+            <Suspense fallback={<PageLoader pageName="gift voucher" />}>
+              <GiftVoucher />
+            </Suspense>
+          </PageWrapper>
+        } />
+
+        <Route path="/employee-support" element={
+          <PageWrapper pageName="employee-support">
+            <Suspense fallback={<PageLoader pageName="employee support" />}>
+              <EmployeeSupport />
+            </Suspense>
+          </PageWrapper>
+        } />
+
+        {/* 404 Route */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </AnimatePresence>
   );
 };
 
-// App Loader Component (Initial Loading)
-const AppLoader = () => <ClothingBrandLoader pageName="fashion experience" />;
-
 // Main App Component
 function App() {
   const [user, setUser] = useState(null);
-  const [cartCount, setCartCount] = useState(0);
-  const [wishlistCount, setWishlistCount] = useState(0);
   const [appLoaded, setAppLoaded] = useState(false);
   const [showQuickHelp, setShowQuickHelp] = useState(true);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState('login');
-  const [welcomeShown, setWelcomeShown] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
     const initializeApp = async () => {
       try {
-        // Check if welcome message has been shown before
-        const hasSeenWelcome = localStorage.getItem('asb_welcome_shown');
+        // Load common CSS first
+        cssManager.loadCSS('common');
         
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 1500));
         
         const savedUser = localStorage.getItem('asb_user');
         if (savedUser) {
           setUser(JSON.parse(savedUser));
         }
         
-        updateCartCount();
-        updateWishlistCount();
         setAppLoaded(true);
         
-        // Show welcome message only once per session
+        const hasSeenWelcome = localStorage.getItem('asb_welcome_shown');
         if (!hasSeenWelcome && !savedUser) {
           setTimeout(() => {
             showWelcomeMessage();
             localStorage.setItem('asb_welcome_shown', 'true');
-          }, 1000);
+          }, 500);
         }
-        
       } catch (error) {
         console.error('App initialization error:', error);
         setAppLoaded(true);
@@ -894,85 +799,34 @@ function App() {
     };
 
     initializeApp();
-
-    window.addEventListener('cartUpdated', updateCartCount);
-    window.addEventListener('wishlistUpdated', updateWishlistCount);
     
     return () => {
-      window.removeEventListener('cartUpdated', updateCartCount);
-      window.removeEventListener('wishlistUpdated', updateWishlistCount);
+      window.removeEventListener('resize', checkMobile);
     };
   }, []);
-
-  const updateCartCount = () => {
-    try {
-      const cart = JSON.parse(localStorage.getItem('cart')) || [];
-      const totalItems = cart.reduce((total, item) => total + (item.quantity || 0), 0);
-      setCartCount(totalItems);
-    } catch (error) {
-      console.error('Error updating cart count:', error);
-      setCartCount(0);
-    }
-  };
-
-  const updateWishlistCount = () => {
-    try {
-      const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-      setWishlistCount(wishlist.length);
-    } catch (error) {
-      console.error('Error updating wishlist count:', error);
-      setWishlistCount(0);
-    }
-  };
 
   const handleLogin = (userData) => {
     setUser(userData);
     localStorage.setItem('asb_user', JSON.stringify(userData));
     setShowAuthModal(false);
     
-    toast.success(
-      <div>
-        <strong>Welcome back, {userData.name || 'Style Seeker'}! ✨</strong>
-        <br />
-        <small>Ready to discover new styles?</small>
-      </div>,
-      {
-        position: "top-right",
-        autoClose: 5000,
-        icon: '👋',
-        style: {
-          background: 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)',
-          color: 'white',
-          borderRadius: '12px',
-          border: '1px solid rgba(255,255,255,0.2)'
-        }
-      }
-    );
+    toast.success(`Welcome back, ${userData.name || 'Fashion Lover'}! ✨`, {
+      position: "top-right",
+      autoClose: 3000,
+      icon: '👋'
+    });
   };
 
   const handleLogout = () => {
-    const userName = user?.name || user?.email || 'Fashion Lover';
+    const userName = user?.name || 'Fashion Lover';
     setUser(null);
     localStorage.removeItem('asb_user');
     
-    toast.info(
-      <div>
-        <strong>See you soon, {userName}! 👋</strong>
-        <br />
-        <small>Come back for more style inspiration</small>
-      </div>,
-      {
-        position: "top-right",
-        autoClose: 4000,
-        icon: '✨',
-        style: {
-          background: 'linear-gradient(135deg, #6b7280 0%, #374151 100%)',
-          color: 'white',
-          borderRadius: '12px',
-          border: '1px solid rgba(255,255,255,0.2)'
-        }
-      }
-    );
+    toast.info(`See you soon, ${userName}! 👋`, {
+      position: "top-right",
+      autoClose: 3000,
+      icon: '✨'
+    });
   };
 
   const handleAuth = (mode) => {
@@ -982,130 +836,102 @@ function App() {
 
   const showWelcomeMessage = () => {
     toast(
-      <div className="text-center">
-        <div className="bg-white rounded-circle d-inline-flex p-2 mb-2">
-          <FaTshirt size={30} color="#dc2626" />
-        </div>
-        <div>
-          <strong className="fs-5">Welcome to ASB Fashion! 🎉</strong>
-          <br />
-          <small className="opacity-75">Discover our latest collections across 18 branches islandwide</small>
-        </div>
-        <hr className="my-2" style={{ borderColor: 'rgba(255,255,255,0.2)' }} />
-        <div className="d-flex justify-content-center gap-2 mt-2 flex-wrap">
-          <span className="badge bg-white text-dark px-2 py-1">New Arrivals</span>
-          <span className="badge bg-white text-dark px-2 py-1">Up to 40% Off</span>
-          <span className="badge bg-white text-dark px-2 py-1">Free Shipping</span>
-          <span className="badge bg-white text-dark px-2 py-1">18 Branches</span>
-        </div>
+      <div>
+        <strong>Welcome to ASB Fashion! 🎉</strong>
+        <br />
+        <small>Discover our latest collections</small>
       </div>,
       {
         position: "top-right",
-        autoClose: 8000,
-        icon: '🎉',
-        style: {
-          background: 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)',
-          color: 'white',
-          borderRadius: '16px',
-          border: '1px solid rgba(255,255,255,0.2)',
-          boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
-          padding: '16px',
-          minWidth: '320px'
-        }
+        autoClose: 5000,
+        icon: '🎉'
       }
     );
   };
 
   if (!appLoaded) {
-    return <AppLoader />;
+    return <ModernLoader pageName="fashion experience" />;
   }
 
   return (
     <Router>
       <div className="App">
-        <Suspense fallback={<AppLoader />}>
-          <ScrollToTop />
-          
-          <Navbar 
-            user={user}
-            onAuth={handleAuth}
-            onLogout={handleLogout}
-            cartCount={cartCount}
-            wishlistCount={wishlistCount}
-          />
-          
-          <main className="main-content" style={{ minHeight: '100vh' }}>
-            <AnimatedRoutes />
-          </main>
+        <ScrollToTop />
+        
+        <Navbar 
+          user={user}
+          onAuth={handleAuth}
+          onLogout={handleLogout}
+        />
+        
+        <main style={{ 
+          minHeight: '100vh',
+          paddingTop: isMobile ? '60px' : '80px' // Adjust based on navbar height
+        }}>
+          <AnimatedRoutes />
+        </main>
 
-          <Footer />
+        <Footer />
 
-          {/* Auth Modal */}
-          {showAuthModal && (
-            <Suspense fallback={null}>
-              <AuthModal 
-                mode={authMode}
-                onClose={() => setShowAuthModal(false)}
-                onLogin={handleLogin}
-                onSwitchMode={setAuthMode}
-              />
-            </Suspense>
-          )}
+        {/* Auth Modal */}
+        {showAuthModal && (
+          <Suspense fallback={null}>
+            <AuthModal 
+              mode={authMode}
+              onClose={() => setShowAuthModal(false)}
+              onLogin={handleLogin}
+              onSwitchMode={setAuthMode}
+            />
+          </Suspense>
+        )}
 
-          {/* Quick Help Button */}
-          {showQuickHelp && (
-            <motion.div
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0, opacity: 0 }}
-              className="position-fixed bottom-0 start-0 m-4"
-              style={{ zIndex: 1040 }}
+        {/* Quick Help Button - Responsive */}
+        {showQuickHelp && (
+          <motion.div
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            style={{
+              position: 'fixed',
+              bottom: isMobile ? '15px' : '20px',
+              left: isMobile ? '15px' : '20px',
+              zIndex: 1000
+            }}
+          >
+            <motion.button
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => window.open('https://wa.me/94719057057', '_blank')}
+              style={{
+                width: isMobile ? '40px' : '50px',
+                height: isMobile ? '40px' : '50px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #25D366, #128C7E)',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+              }}
             >
-              <motion.button
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                whileTap={{ scale: 0.9 }}
-                className="btn btn-danger rounded-circle shadow-lg position-relative"
-                style={{ width: '60px', height: '60px', background: 'linear-gradient(135deg, #25D366, #128C7E)' }}
-                onClick={() => window.open('https://wa.me/94719057057', '_blank')}
-              >
-                <FaWhatsapp size={28} className="text-white" />
-                <motion.span 
-                  className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 1, repeat: Infinity }}
-                >
-                  Help
-                </motion.span>
-              </motion.button>
-            </motion.div>
-          )}
+              <FaWhatsapp size={isMobile ? 20 : 24} color="white" />
+            </motion.button>
+          </motion.div>
+        )}
 
-          {/* Toast Container */}
-          <ToastContainer
-            position="top-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="dark"
-            style={{ 
-              marginTop: '80px',
-              zIndex: 9999 
-            }}
-            toastStyle={{
-              borderRadius: '12px',
-              boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
-              border: '1px solid rgba(220,38,38,0.3)',
-              fontSize: '14px',
-              padding: '12px 20px',
-              backdropFilter: 'blur(10px)'
-            }}
-          />
-        </Suspense>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </div>
     </Router>
   );
