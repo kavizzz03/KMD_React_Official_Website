@@ -117,8 +117,8 @@ http://localhost:3000
 ## 📸 Screenshots & UI
 
 ![Banner](assets/images/banner.png)
-![Product 1](assets/images/product1.jpg)
-![Product 2](assets/images/product2.jpg)
+![About Us](assets/images/product1.png)
+![Footer](assets/images/product2.png)
 * Responsive product grid
 * Hero banners
 * Carousel slides
