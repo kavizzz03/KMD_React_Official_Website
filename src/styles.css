@@ -1,0 +1,193 @@
+/* App.css - Enhanced Styles for Sweet Shop App */
+
+/* Global Styles */
+.App {
+  min-height: 100vh;
+  position: relative;
+}
+
+.main-content {
+  min-height: calc(100vh - 160px);
+  position: relative;
+}
+
+/* Gradient Backgrounds */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.bg-gradient-sweet {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+}
+
+/* Loading Animations */
+.page-loader,
+.app-loading {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.sweet-logo {
+  position: relative;
+}
+
+.sweet-logo::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(255,215,0,0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+/* Toast Customizations */
+.Toastify__toast {
+  border-radius: 12px !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12) !important;
+  border: 1px solid rgba(255,193,7,0.2) !important;
+  font-size: 14px !important;
+}
+
+.Toastify__toast--success {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+}
+
+.Toastify__toast--error {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%) !important;
+  color: white !important;
+}
+
+.Toastify__toast--warning {
+  background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%) !important;
+  color: #333 !important;
+}
+
+/* Floating Love Message Animation */
+.floating-love {
+  animation: floatLove 3s ease-in-out infinite;
+}
+
+@keyframes floatLove {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: linear-gradient(180deg, #f8f9fa, #e9ecef);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ffc107, #ff8c00);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #ff8c00, #ff6b00);
+}
+
+/* Page transition styles */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(30px) scale(0.98);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateY(-30px) scale(1.02);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .main-content {
+    min-height: calc(100vh - 140px);
+  }
+  
+  .Toastify__toast-container {
+    margin-top: 60px !important;
+  }
+  
+  .floating-love {
+    bottom: 10px !important;
+    right: 10px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .page-loader .display-1 {
+    font-size: 3rem !important;
+  }
+  
+  .Toastify__toast {
+    margin: 0.5rem !important;
+    border-radius: 8px !important;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .page-loader,
+  .app-loading {
+    animation: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .Toastify,
+  .floating-love,
+  .navbar,
+  .footer {
+    display: none !important;
+  }
+  
+  .main-content {
+    min-height: auto;
+  }
+}
