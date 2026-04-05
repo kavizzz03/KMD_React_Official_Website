@@ -1,70 +1,161 @@
-# Getting Started with Create React App
+# 🍰 KMD Sweet House Official Website
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Welcome to the official repository of **KMD Sweet House** 🎉
+A modern, responsive, and user-friendly **React-based web application** designed to showcase sweet products, promotions, and customer engagement features.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 📌 Project Overview
 
-### `npm start`
+KMD Sweet House website is built to provide a smooth and attractive online experience for customers. It allows users to explore products, view offers, and connect easily with the business.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+This system focuses on:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+* Better user experience (UX)
+* Mobile-first responsive design
+* Fast loading performance
+* Easy product showcase and navigation
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## ✨ Key Features
 
-### `npm run build`
+### 🛍️ Product Showcase
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+* Display sweets with images, price, and details
+* Categorized product sections
+* Responsive grid layout for desktop and mobile
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 🎞️ Media & UI
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+* Image slider / carousel system for promotions
+* Separate mobile & desktop images
+* Attractive banners for deals and featured products
 
-### `npm run eject`
+### 🔍 Search & Filtering
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+* Real-time product search
+* Category-based filtering
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 📱 Responsive Design
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+* Fully optimized for:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+  * Mobile 📱
+  * Tablet 📲
+  * Desktop 💻
 
-## Learn More
+### 📞 Contact & Social
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+* Email and phone contact form
+* Social media integration
+* Contact section with friendly UI
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+## 🛠️ Tech Stack
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+* ⚛️ React.js
+* 🎨 Tailwind CSS / Bootstrap
+* 🔄 Axios for frontend data fetching
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 📂 Folder Structure
 
-### Making a Progressive Web App
+```
+KMD-Sweet-House/
+│
+├── public/
+├── src/
+│   ├── components/     # Reusable UI components
+│   ├── pages/          # Main pages
+│   ├── assets/         # Images, icons, videos
+│   ├── services/       # API calls (frontend dummy data)
+│   └── App.js
+│
+├── package.json
+└── README.md
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
 
-### Advanced Configuration
+## ⚙️ Installation & Running
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### 1️⃣ Clone Repository
 
-### Deployment
+```
+git clone https://github.com/your-username/your-repo.git
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### 2️⃣ Navigate to project
 
-### `npm run build` fails to minify
+```
+cd your-repo
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### 3️⃣ Install Dependencies
+
+```
+npm install
+```
+
+### 4️⃣ Start Development Server
+
+```
+npm start
+```
+
+App will run on:
+
+```
+http://localhost:3000
+```
+
+---
+
+## 📸 Screenshots & UI
+
+> Add your screenshots here to show the frontend design
+
+* Responsive product grid
+* Hero banners
+* Carousel slides
+* Contact and social sections
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome!
+
+Steps:
+
+1. Fork the repository
+2. Create a new branch
+3. Make changes to the frontend UI or components
+4. Submit a Pull Request
+
+---
+
+## 📞 Contact
+
+* 👤 Name: Kavindu Bogahawatte
+* 📧 Email: [kavindumalshan2003@gmail.com](mailto:kavindumalshan2003@gmail.com)
+* 📱 Phone: +94740890730
+
+---
+
+## ⭐ Support
+
+If you like this project, please give it a ⭐ on GitHub and share it!
+
+---
+
+## 📜 License
+
+This project is licensed under the MIT License.
+
+---
+
+💖 Developed with passion by **Kavindu Bogahawatte / KMD Sweet House Team**
