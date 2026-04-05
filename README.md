@@ -85,7 +85,7 @@ KMD-Sweet-House/
 ### 1️⃣ Clone Repository
 
 ```
-git clone https://github.com/your-username/your-repo.git
+git clone https://github.com/kavizzz03/KMD_React_Official_Website.git
 ```
 
 ### 2️⃣ Navigate to project
